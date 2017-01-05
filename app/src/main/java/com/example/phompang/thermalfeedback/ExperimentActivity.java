@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.example.phompang.thermalfeedback.ExperimentFragment.OnFragmentInteractionListener;
+import com.example.phompang.thermalfeedback.services.ServiceIO1;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 public class ExperimentActivity extends AppCompatActivity
@@ -55,6 +56,8 @@ public class ExperimentActivity extends AppCompatActivity
         tabLayout.addTab(tabLayout.newTab().setText("Simulated"));
 
         tabLayout.addOnTabSelectedListener(this);
+        
+        startService(new Intent(getApplicationContext(), ServiceIO1.class));
 
         getSupportFragmentManager().beginTransaction().replace(R.id.flContent, ExperimentFragment.newInstance(0)).commit();
     }

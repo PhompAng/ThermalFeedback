@@ -10,8 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.example.phompang.thermalfeedback.services.ServiceIO1;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -25,8 +23,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-
-        startService(new Intent(getApplicationContext(), ServiceIO1.class));
 
         MainFragment mainFragment = MainFragment.newInstance("test", "test");
 
