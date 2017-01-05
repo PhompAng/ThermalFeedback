@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ProfileInput">
+        <attr name="pi_img" format="integer" />
+        <attr name="pi_hint" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="NotificationDetail">
+        <attr name="nd_img" format="integer" />
+        <attr name="nd_text" format="string" />
+        <attr name="nd_sub" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="Seeker">
+        <attr name="sk_text" format="string" />
+        <attr name="sk_min" format="integer" />
+        <attr name="sk_max" format="integer" />
+    </declare-styleable>
+</resources>

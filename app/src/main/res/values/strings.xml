@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Thermal Feedback</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="setting">Setting</string>
+    <string name="title_activity_experiment">ExperimentActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="connected">Connected</string>
+    <string name="not_connect">Not connect</string>
+</resources>
