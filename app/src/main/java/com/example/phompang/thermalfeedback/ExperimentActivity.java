@@ -56,7 +56,7 @@ public class ExperimentActivity extends AppCompatActivity
         tabLayout.addTab(tabLayout.newTab().setText("Simulated"));
 
         tabLayout.addOnTabSelectedListener(this);
-        
+
         startService(new Intent(getApplicationContext(), ServiceIO1.class));
 
         getSupportFragmentManager().beginTransaction().replace(R.id.flContent, ExperimentFragment.newInstance(0)).commit();
@@ -114,6 +114,7 @@ public class ExperimentActivity extends AppCompatActivity
                         String username = ((EditText) dialogView.findViewById(R.id.username)).getText().toString();
                         String password = ((EditText) dialogView.findViewById(R.id.password)).getText().toString();
                         //TODO Validate
+                        stopService(new Intent(getApplicationContext(), ServiceIO1.class));
                         dialog.dismiss();
                         getSupportFragmentManager().beginTransaction().replace(R.id.flContent, SummaryFragment.newInstance(0)).commit();
                     }

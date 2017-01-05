@@ -62,6 +62,15 @@ public class ServiceIO1 extends IOIOService {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        Log.d("serviceIO1", "destroy");
+        this.unregisterReceiver(mSmsReceiver);
+        this.unregisterReceiver(mNotificationReceiver);
+    }
+
+    @Override
     protected IOIOLooper createIOIOLooper() {
         return new Looper();
     }
