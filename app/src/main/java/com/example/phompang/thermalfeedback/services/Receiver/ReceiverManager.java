@@ -8,7 +8,16 @@ public class ReceiverManager {
     private int thermal_warning;
     private int delay_warning;
 
-    public ReceiverManager() {
+    private static ReceiverManager sReceiverManager;
+
+    private ReceiverManager() {
+    }
+
+    public static ReceiverManager getInstance() {
+        if (sReceiverManager == null) {
+            sReceiverManager = new ReceiverManager();
+        }
+        return sReceiverManager;
     }
 
     public Integer getThermal_warning() {

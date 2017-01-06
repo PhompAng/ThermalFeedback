@@ -42,7 +42,7 @@ public class ServiceIO1 extends IOIOService {
 
         Log.d("serviceIO1", "start");
 
-        manager = new ReceiverManager();
+        manager = ReceiverManager.getInstance();
 
         mNotificationReceiver = new NotificationReceiver(manager);
         mSmsReceiver = new SMSReceiver(manager);
