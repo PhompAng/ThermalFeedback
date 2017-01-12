@@ -19,14 +19,13 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.example.phompang.thermalfeedback.ExperimentFragment.OnFragmentInteractionListener;
+import com.example.phompang.thermalfeedback.services.Receiver.ReceiverManager;
 import com.example.phompang.thermalfeedback.services.ServiceIO1;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 public class ExperimentActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         OnFragmentInteractionListener, SummaryFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, TabLayout.OnTabSelectedListener {
-
-    private boolean playing = true;
 
     private TabLayout tabLayout;
     private FloatingActionsMenu floatingActionsMenu;
@@ -86,11 +85,12 @@ public class ExperimentActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_play:
-                if (playing) {
-                    playing = false;
+                boolean isPause = ReceiverManager.getInstance().isPause();
+                if (isPause) {
+                    ReceiverManager.getInstance().setPause(false);
                     item.setIcon(R.drawable.ic_pause_white_24dp);
                 } else {
-                    playing = true;
+                    ReceiverManager.getInstance().setPause(true);
                     item.setIcon(R.drawable.ic_play_arrow_white_24dp);
                 }
                 return true;
@@ -185,11 +185,11 @@ public class ExperimentActivity extends AppCompatActivity
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if (playing) {
-            fragmentTransaction.replace(R.id.flContent, ExperimentFragment.newInstance(tab.getPosition())).commit();
-        } else {
-            fragmentTransaction.replace(R.id.flContent, SummaryFragment.newInstance(tab.getPosition())).commit();
-        }
+//        if (playing) {
+//            fragmentTransaction.replace(R.id.flContent, ExperimentFragment.newInstance(tab.getPosition())).commit();
+//        } else {
+//            fragmentTransaction.replace(R.id.flContent, SummaryFragment.newInstance(tab.getPosition())).commit();
+//        }
     }
 
     @Override

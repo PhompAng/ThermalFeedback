@@ -7,6 +7,7 @@ package com.example.phompang.thermalfeedback.services.Receiver;
 public class ReceiverManager {
     private int thermal_warning;
     private int delay_warning;
+    private boolean isPause = false;
 
     private static ReceiverManager sReceiverManager;
 
@@ -35,5 +36,13 @@ public class ReceiverManager {
 
     public void setDelay_warning(Integer delay_warning) {
         this.delay_warning = delay_warning;
+    }
+
+    public boolean isPause() {
+        return isPause;
+    }
+
+    public void setPause(boolean pause) {
+        isPause = pause;
     }
 }

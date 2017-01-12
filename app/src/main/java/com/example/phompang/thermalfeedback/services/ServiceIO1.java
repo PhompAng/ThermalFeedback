@@ -116,6 +116,13 @@ public class ServiceIO1 extends IOIOService {
 
         public void loop() throws ConnectionLostException {
             try {
+                Log.d("pause", manager.isPause() + "");
+                if (manager.isPause()) {
+                    manager.setThermal_warning(0);
+                    dOutA.write(false);
+                    dOutB.write(false);
+                    return;
+                }
                 int neutral_temp = 32;
                 int intensity_very = 6;
                 int intensity_regular = 3;
