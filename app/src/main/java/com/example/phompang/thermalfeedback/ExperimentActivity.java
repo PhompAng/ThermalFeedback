@@ -156,6 +156,7 @@ public class ExperimentActivity extends AppCompatActivity
                 break;
             case R.id.action_logout:
                 //TODO logout
+                stopService(new Intent(getApplicationContext(), ServiceIO1.class));
                 finish();
                 break;
         }
