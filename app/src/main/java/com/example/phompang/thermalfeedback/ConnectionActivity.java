@@ -14,6 +14,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.phompang.thermalfeedback.services.Receiver.ReceiverManager;
+import com.example.phompang.thermalfeedback.services.ServiceIO1;
+
 import java.util.Locale;
 import java.util.Set;
 
@@ -35,6 +38,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
 
     private CountDownTimer timer;
     private BluetoothAdapter mBluetoothAdapter;
+    private ReceiverManager mReceiverManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +49,8 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Connect and Test Device");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mReceiverManager = ReceiverManager.getInstance();
 
         findViewById(R.id.very_hot).setOnClickListener(this);
         findViewById(R.id.hot).setOnClickListener(this);
@@ -113,7 +119,11 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         final String testText = ((TextView) v).getText().toString();
+        int thermalWarning = Integer.parseInt(v.getTag().toString());
+        //TODO cancel testing
         Snackbar.make(findViewById(R.id.activity_connection), String.format(Locale.getDefault(), "Testing stimuli: %s", testText), Snackbar.LENGTH_LONG).show();
+        mReceiverManager.setThermal_warning(thermalWarning);
+        mReceiverManager.setDelay_warning(0);
         if (timer != null) {
             timer.cancel();
         }
@@ -124,10 +134,17 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             }
 
             public void onFinish() {
+                mReceiverManager.setThermal_warning(0);
                 testing.setText("Testing stimuli: ");
                 duration.setText("Duration: 15 sec");
             }
         }.start();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startService(new Intent(getApplicationContext(), ServiceIO1.class));
     }
 
     @Override
@@ -136,5 +153,6 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         if (timer != null) {
             timer.cancel();
         }
+        stopService(new Intent(getApplicationContext(), ServiceIO1.class));
     }
 }

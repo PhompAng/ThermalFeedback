@@ -29,7 +29,6 @@ public class ReceiverManager {
         this.thermal_warning = thermal_warning;
     }
 
-
     public Integer getDelay_warning() {
         return delay_warning;
     }
