@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_setting:
-                startActivity(new Intent(MainActivity.this, TestActivity.class));
+                startActivity(new Intent(MainActivity.this, ConnectionActivity.class));
                 return true;
             case R.id.action_admin:
                 startActivity(new Intent(MainActivity.this, AdminActivity.class));
