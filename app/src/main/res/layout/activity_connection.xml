@@ -91,6 +91,7 @@
 
         <Button
             android:id="@+id/very_hot"
+            android:tag="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Very Hot"
@@ -100,6 +101,7 @@
             android:layout_marginTop="8dp"/>
         <Button
             android:id="@+id/hot"
+            android:tag="2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hot"
@@ -108,6 +110,7 @@
             app:layout_constraintRight_toRightOf="parent"/>
         <Button
             android:id="@+id/very_cold"
+            android:tag="4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Very Cold"
@@ -115,6 +118,7 @@
             app:layout_constraintLeft_toLeftOf="@+id/very_hot"/>
         <Button
             android:id="@+id/cold"
+            android:tag="3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cold"

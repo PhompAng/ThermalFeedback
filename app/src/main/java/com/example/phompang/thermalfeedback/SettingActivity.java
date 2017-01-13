@@ -10,6 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.phompang.thermalfeedback.services.Receiver.ReceiverManager;
+import com.example.phompang.thermalfeedback.services.ServiceIO1;
+
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -26,6 +29,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     TextView testing;
 
     private CountDownTimer timer;
+    private ReceiverManager mReceiverManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Calibrate Device");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mReceiverManager = ReceiverManager.getInstance();
 
         findViewById(R.id.very_hot).setOnClickListener(this);
         findViewById(R.id.hot).setOnClickListener(this);
@@ -62,7 +68,11 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         final String testText = ((TextView) v).getText().toString();
-        Snackbar.make(findViewById(R.id.activity_setting), String.format(Locale.getDefault(), "Testing stimuli: %s", testText), Snackbar.LENGTH_LONG).show();
+        int thermalWarning = Integer.parseInt(v.getTag().toString());
+        //TODO cancel testing
+        Snackbar.make(findViewById(R.id.activity_connection), String.format(Locale.getDefault(), "Testing stimuli: %s", testText), Snackbar.LENGTH_LONG).show();
+        mReceiverManager.setThermal_warning(thermalWarning);
+        mReceiverManager.setDelay_warning(0);
         if (timer != null) {
             timer.cancel();
         }
@@ -73,10 +83,17 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             }
 
             public void onFinish() {
+                mReceiverManager.setThermal_warning(0);
                 testing.setText("Testing stimuli: ");
                 duration.setText("Duration: 15 sec");
             }
         }.start();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startService(new Intent(getApplicationContext(), ServiceIO1.class));
     }
 
     @Override
@@ -85,5 +102,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         if (timer != null) {
             timer.cancel();
         }
+        stopService(new Intent(getApplicationContext(), ServiceIO1.class));
     }
 }

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1010715573268",
+    "firebase_url": "https://thermalfeedback.firebaseio.com",
+    "project_id": "thermalfeedback",
+    "storage_bucket": "thermalfeedback.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1010715573268:android:e02cd59f82c72bca",
+        "android_client_info": {
+          "package_name": "com.example.phompang.thermalfeedback"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1010715573268-1juri41g796sc0tu5iribbf6328a4eps.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.phompang.thermalfeedback",
+            "certificate_hash": "0B4E42405327E3B674255F9ABA2EC3D1B784E2E3"
+          }
+        },
+        {
+          "client_id": "1010715573268-1gmg9oagl2uvgokvsk5qdt8qamm1gfp5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeMCyi4qnSXEMBK3ZHNSzhP2_QqdwFCdc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1010715573268-1gmg9oagl2uvgokvsk5qdt8qamm1gfp5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
