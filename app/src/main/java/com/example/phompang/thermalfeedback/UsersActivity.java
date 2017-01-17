@@ -1,5 +1,6 @@
 package com.example.phompang.thermalfeedback;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class UsersActivity extends AppCompatActivity {
 
@@ -53,6 +55,11 @@ public class UsersActivity extends AppCompatActivity {
         users.add(new User());
         users.add(new User());
         users.add(new User());
+    }
+
+    @OnClick(R.id.add)
+    public void add() {
+        startActivity(new Intent(this, AddUserActivity.class));
     }
 
     @Override

@@ -32,7 +32,7 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
-        <!--<service android:name=".app.ServiceIO" />-->
+        <!-- <service android:name=".app.ServiceIO" /> -->
         <service android:name=".services.ServiceIO1" />
 
         <activity
@@ -43,19 +43,20 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!--<intent-filter>-->
-                <!--<action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />-->
-            <!--</intent-filter>-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" /> -->
+            <!-- </intent-filter> -->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" /> -->
+            <!-- </intent-filter> -->
 
-            <!--<meta-data-->
-                <!--android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"-->
-                <!--android:resource="@xml/accessory_filter" />-->
-            <!--<meta-data-->
-                <!--android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"-->
-                <!--android:resource="@xml/device_filter" />-->
+
+            <!-- <meta-data -->
+            <!-- android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" -->
+            <!-- android:resource="@xml/accessory_filter" /> -->
+            <!-- <meta-data -->
+            <!-- android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" -->
+            <!-- android:resource="@xml/device_filter" /> -->
         </activity>
         <activity
             android:name=".ExperimentActivity"
@@ -65,6 +66,7 @@
         <activity android:name=".AdminActivity" />
         <activity android:name=".UsersActivity" />
         <activity android:name=".TestActivity" />
+        <activity android:name=".AddUserActivity"></activity>
     </application>
 
 </manifest>
