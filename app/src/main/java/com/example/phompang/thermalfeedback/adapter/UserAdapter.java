@@ -25,16 +25,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     private Context context;
     private List<User> users;
+    private ViewHolder.OnUserClickListener listener;
 
-    public UserAdapter(Context context, List<User> users) {
+    public UserAdapter(Context context, List<User> users, ViewHolder.OnUserClickListener listener) {
         this.context = context;
         this.users = users;
+        this.listener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(context).inflate(R.layout.layout_contact, parent, false);
-        return new ViewHolder(v);
+        return new ViewHolder(v, listener);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         return users.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.img)
         ImageView img;
         @BindView(R.id.name)
@@ -58,9 +60,25 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         TextView phone;
         @BindView(R.id.delete)
         ImageButton delete;
-        ViewHolder(View itemView) {
+
+        OnUserClickListener listener;
+        ViewHolder(View itemView, OnUserClickListener listener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            this.listener = listener;
+            delete.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (listener != null) {
+                listener.onDelete(getAdapterPosition());
+            }
+        }
+
+        public interface OnUserClickListener {
+            void onDelete(int position);
         }
     }
 }

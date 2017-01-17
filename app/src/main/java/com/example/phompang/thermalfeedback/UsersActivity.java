@@ -2,6 +2,8 @@ package com.example.phompang.thermalfeedback;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.example.phompang.thermalfeedback.adapter.UserAdapter;
+import com.example.phompang.thermalfeedback.app.FirebaseUtils;
 import com.example.phompang.thermalfeedback.model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,8 +26,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class UsersActivity extends AppCompatActivity {
+public class UsersActivity extends AppCompatActivity implements UserAdapter.ViewHolder.OnUserClickListener {
 
+    @BindView(R.id.activity_users)
+    CoordinatorLayout layout;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.list)
@@ -50,7 +55,7 @@ public class UsersActivity extends AppCompatActivity {
 
         users = new ArrayList<>();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        adapter = new UserAdapter(this, users);
+        adapter = new UserAdapter(this, users, this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
     }
@@ -99,4 +104,10 @@ public class UsersActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onDelete(int position) {
+        String uid = users.get(position).getUid();
+        FirebaseUtils.deleteUser(uid);
+        Snackbar.make(layout, "Delete Successful", Snackbar.LENGTH_SHORT).show();
+    }
 }
