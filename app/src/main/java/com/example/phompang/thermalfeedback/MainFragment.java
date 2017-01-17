@@ -1,17 +1,24 @@
 package com.example.phompang.thermalfeedback;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Spinner;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
@@ -38,6 +45,9 @@ public class MainFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private DatabaseReference reference;
+    private String uid;
 
     public MainFragment() {
         // Required empty public constructor
@@ -70,7 +80,12 @@ public class MainFragment extends Fragment {
         }
     }
 
+    @BindView(R.id.user)
+    Spinner user;
+    @BindView(R.id.start_btn)
+    Button start;
     private List<String> users;
+    private HintSpinner<String> hintSpinner;
     private Unbinder unbinder;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,37 +94,47 @@ public class MainFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
         unbinder = ButterKnife.bind(this, v);
 
-        initList();
+        reference = FirebaseDatabase.getInstance().getReference();
+        users = new ArrayList<>();
 
-        HintSpinner<String> hintSpinner = new HintSpinner<>(
-                (Spinner) v.findViewById(R.id.user),
-                new HintAdapter<>(getContext(), "User", users),
-                new HintSpinner.Callback<String>() {
-                    @Override
-                    public void onItemSelected(int position, String itemAtPosition) {
+        start.setEnabled(false);
+        reference.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                users.clear();
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    users.add(snapshot.getKey());
+                }
+                hintSpinner = new HintSpinner<>(
+                        user,
+                        new HintAdapter<>(getContext(), "User", users),
+                        new HintSpinner.Callback<String>() {
+                            @Override
+                            public void onItemSelected(int position, String itemAtPosition) {
+                                start.setEnabled(true);
+                                uid = itemAtPosition;
+                            }
+                        });
+                hintSpinner.init();
+            }
 
-                    }
-                });
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-        hintSpinner.init();
+            }
+        });
+
         return v;
     }
-
-    private void initList() {
-        users = new ArrayList<>();
-        users.add("U1");
-        users.add("U2");
-    }
-
     @OnClick(R.id.start_btn)
     public void start() {
-        onButtonPressed(null);
+        onButtonPressed(uid);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onButtonPressed(String uid) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onFragmentInteraction(uid);
         }
     }
 
@@ -148,6 +173,6 @@ public class MainFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(String uid);
     }
 }
