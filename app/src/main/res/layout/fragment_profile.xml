@@ -61,16 +61,19 @@
             android:layout_marginStart="56dp"/>
 
         <RadioGroup
+            android:id="@+id/gender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="56dp">
             <RadioButton
                 android:id="@+id/male"
+                android:tag="Male"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Male"/>
             <RadioButton
                 android:id="@+id/female"
+                android:tag="Female"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Female"/>
