@@ -3,6 +3,7 @@ package com.example.phompang.thermalfeedback;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 
@@ -63,5 +64,16 @@ public class AddUserActivity extends AppCompatActivity {
 
         FirebaseUtils.addUser(u);
         finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
