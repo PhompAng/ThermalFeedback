@@ -10,6 +10,11 @@ import android.view.MenuItem;
 
 import com.example.phompang.thermalfeedback.adapter.UserAdapter;
 import com.example.phompang.thermalfeedback.model.User;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +32,8 @@ public class UsersActivity extends AppCompatActivity {
 
     private UserAdapter adapter;
     private List<User> users;
+    private DatabaseReference reference;
+    private DatabaseReference userRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,28 +45,47 @@ public class UsersActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Users Management");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        makeList();
+        reference = FirebaseDatabase.getInstance().getReference();
+        userRef = reference.child("users");
+
+        users = new ArrayList<>();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         adapter = new UserAdapter(this, users);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-
     }
 
-    private void makeList() {
-        users = new ArrayList<>();
-        users.add(new User());
-        users.add(new User());
-        users.add(new User());
-        users.add(new User());
-        users.add(new User());
-        users.add(new User());
-        users.add(new User());
+    @Override
+    protected void onStart() {
+        super.onStart();
+        userRef.addValueEventListener(listener);
     }
+
+    private ValueEventListener listener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            users.clear();
+            for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                users.add(snapshot.getValue(User.class));
+            }
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
 
     @OnClick(R.id.add)
     public void add() {
         startActivity(new Intent(this, AddUserActivity.class));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        userRef.removeEventListener(listener);
     }
 
     @Override
