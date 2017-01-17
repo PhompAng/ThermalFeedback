@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -47,10 +48,12 @@ public class ProfileInput extends FrameLayout {
             TypedArray typedArray = getContext().obtainStyledAttributes(attributeSet, R.styleable.ProfileInput);
             Drawable drawable = typedArray.getDrawable(R.styleable.ProfileInput_pi_img);
             String hint = typedArray.getString(R.styleable.ProfileInput_pi_hint);
+            int inputType = typedArray.getInt(R.styleable.ProfileInput_android_inputType, InputType.TYPE_TEXT_VARIATION_NORMAL);
             typedArray.recycle();
 
             setImg(drawable);
             setHint(hint);
+            setInputType(inputType);
         }
     }
 
@@ -66,6 +69,10 @@ public class ProfileInput extends FrameLayout {
 
     public void setHint(String hint) {
         textInputLayout.setHint(hint);
+    }
+
+    public void setInputType(int inputType) {
+        text.setInputType(inputType);
     }
 
     public CharSequence getText() {

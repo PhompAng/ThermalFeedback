@@ -3,6 +3,7 @@
     <declare-styleable name="ProfileInput">
         <attr name="pi_img" format="integer" />
         <attr name="pi_hint" format="string" />
+        <attr name="android:inputType" />
     </declare-styleable>
 
     <declare-styleable name="NotificationDetail">

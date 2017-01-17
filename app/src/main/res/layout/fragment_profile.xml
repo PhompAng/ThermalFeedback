@@ -33,6 +33,7 @@
             android:id="@+id/session"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="number"
             app:pi_hint="Number of Session"/>
 
         <com.example.phompang.thermalfeedback.view.ProfileInput
@@ -52,6 +53,7 @@
             android:id="@+id/age"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="number"
             app:pi_hint="Age"/>
 
         <TextView
