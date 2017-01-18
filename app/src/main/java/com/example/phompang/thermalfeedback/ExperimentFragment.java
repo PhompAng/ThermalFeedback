@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,7 @@ public class ExperimentFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
 
-    private int mParam1;
+    private String uid;
 
     private OnFragmentInteractionListener mListener;
 
@@ -45,14 +46,14 @@ public class ExperimentFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
+     * @param uid Parameter 1.
      * @return A new instance of fragment ExperimentFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ExperimentFragment newInstance(int param1) {
+    public static ExperimentFragment newInstance(String uid) {
         ExperimentFragment fragment = new ExperimentFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM1, uid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,7 +62,7 @@ public class ExperimentFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getInt(ARG_PARAM1);
+            this.uid = getArguments().getString(ARG_PARAM1);
         }
     }
 
@@ -76,6 +77,8 @@ public class ExperimentFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_experiment, container, false);
         unbinder = ButterKnife.bind(this, v);
+
+        Log.d("uid", uid);
 
         ((ExperimentActivity) getActivity()).showTab();
 

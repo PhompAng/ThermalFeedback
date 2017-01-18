@@ -32,7 +32,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
 
     @Override
     public void onFragmentInteraction(String uid) {
-        startActivity(new Intent(MainActivity.this, ExperimentActivity.class));
+        Intent intent = new Intent(MainActivity.this, ExperimentActivity.class);
+        intent.putExtra("uid", uid);
+        startActivity(intent);
     }
 
     @Override

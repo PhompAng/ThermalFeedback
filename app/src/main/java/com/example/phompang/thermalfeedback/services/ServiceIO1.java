@@ -36,6 +36,8 @@ public class ServiceIO1 extends IOIOService {
     private ReceiverManager manager;
     Vibrator v;
 
+    private String uid;
+
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
@@ -43,6 +45,11 @@ public class ServiceIO1 extends IOIOService {
         Log.d("serviceIO1", "start");
 
         manager = ReceiverManager.getInstance();
+
+        if (intent.getStringExtra("uid") != null) {
+            uid = intent.getStringExtra("uid");
+            manager.setUid(uid);
+        }
 
         mNotificationReceiver = new NotificationReceiver(manager);
         mSmsReceiver = new SMSReceiver(manager);

@@ -8,6 +8,7 @@ public class ReceiverManager {
     private int thermal_warning;
     private int delay_warning;
     private boolean isPause = false;
+    private String uid;
 
     private static ReceiverManager sReceiverManager;
 
@@ -43,5 +44,13 @@ public class ReceiverManager {
 
     public void setPause(boolean pause) {
         isPause = pause;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

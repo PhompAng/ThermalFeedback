@@ -29,6 +29,7 @@ public class ExperimentActivity extends AppCompatActivity
 
     private TabLayout tabLayout;
     private FloatingActionsMenu floatingActionsMenu;
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,10 @@ public class ExperimentActivity extends AppCompatActivity
         setContentView(R.layout.activity_experiment);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        if (getIntent() != null) {
+            uid = getIntent().getStringExtra("uid");
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -56,9 +61,11 @@ public class ExperimentActivity extends AppCompatActivity
 
         tabLayout.addOnTabSelectedListener(this);
 
-        startService(new Intent(getApplicationContext(), ServiceIO1.class));
+        Intent intent = new Intent(getApplicationContext(), ServiceIO1.class);
+        intent.putExtra("uid", uid);
+        startService(intent);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.flContent, ExperimentFragment.newInstance(0)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.flContent, ExperimentFragment.newInstance(uid)).commit();
     }
 
     @Override
@@ -135,7 +142,7 @@ public class ExperimentActivity extends AppCompatActivity
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         switch (item.getItemId()) {
             case R.id.action_home:
-                fragmentTransaction.replace(R.id.flContent, ExperimentFragment.newInstance(0)).commit();
+                fragmentTransaction.replace(R.id.flContent, ExperimentFragment.newInstance(uid)).commit();
                 break;
             case R.id.action_profile:
                 tabLayout.setVisibility(View.GONE);
