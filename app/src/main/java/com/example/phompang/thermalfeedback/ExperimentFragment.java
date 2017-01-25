@@ -100,10 +100,11 @@ public class ExperimentFragment extends Fragment {
         return v;
     }
 
-    private DatabaseReference notificationRef = reference.child("users").child(uid).child("notificationMap");;
+    private DatabaseReference notificationRef;
     private ValueEventListener listener;
 
     private void retrieveNotifications() {
+        notificationRef = reference.child("users").child(uid).child("notificationMap");
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
