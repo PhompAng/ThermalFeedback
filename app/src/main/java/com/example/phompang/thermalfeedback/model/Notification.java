@@ -6,8 +6,8 @@ package com.example.phompang.thermalfeedback.model;
 
 public class Notification {
     private int attempt;
-    private boolean is_real;
-    private int type;
+    private boolean isReal;
+    private String type;
     private String phone;
     private int stimuli;
     private boolean isContact;
@@ -20,12 +20,27 @@ public class Notification {
     public Notification() {
     }
 
+    public int getAttempt() {
+        return attempt;
+    }
 
-    public int getType() {
+    public void setAttempt(int attempt) {
+        this.attempt = attempt;
+    }
+
+    public boolean isReal() {
+        return isReal;
+    }
+
+    public void setIsReal(boolean real) {
+        setReal(real);
+    }
+
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -49,24 +64,24 @@ public class Notification {
         return isContact;
     }
 
-    public void setContact(boolean contact) {
-        isContact = contact;
+    public void setIsContact(boolean contact) {
+        setContact(contact);
     }
 
     public boolean isThermal() {
         return isThermal;
     }
 
-    public void setThermal(boolean thermal) {
-        isThermal = thermal;
+    public void setIsThermal(boolean thermal) {
+        setThermal(thermal);
     }
 
     public boolean isVibrate() {
         return isVibrate;
     }
 
-    public void setVibrate(boolean vibrate) {
-        isVibrate = vibrate;
+    public void setIsVibrate(boolean vibrate) {
+        setVibrate(vibrate);
     }
 
     public long getStartTime() {
@@ -93,19 +108,24 @@ public class Notification {
         this.endTime = endTime;
     }
 
-    public int getAttempt() {
-        return attempt;
+    public void setReal(boolean real) {
+        isReal = real;
     }
 
-    public void setAttempt(int attempt) {
-        this.attempt = attempt;
+    public void setContact(boolean contact) {
+        isContact = contact;
     }
 
-    public boolean is_real() {
-        return is_real;
+    public void setThermal(boolean thermal) {
+        isThermal = thermal;
     }
 
-    public void setIs_real(boolean is_real) {
-        this.is_real = is_real;
+    public void setVibrate(boolean vibrate) {
+        isVibrate = vibrate;
+    }
+
+    @Override
+    public String toString() {
+        return getType() + ":" + getStartTime();
     }
 }

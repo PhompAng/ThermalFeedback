@@ -1,5 +1,8 @@
 package com.example.phompang.thermalfeedback.services.Receiver;
 
+import com.example.phompang.thermalfeedback.app.FirebaseUtils;
+import com.example.phompang.thermalfeedback.model.Notification;
+
 /**
  * Created by phompang on 1/5/2017 AD.
  */
@@ -21,6 +24,14 @@ public class ReceiverManager {
             sReceiverManager = new ReceiverManager();
         }
         return sReceiverManager;
+    }
+
+    public void pushNotification(Notification notification) {
+        FirebaseUtils.addNotification(uid, notification);
+    }
+
+    public void responseNotification(String type, long responseTime) {
+        FirebaseUtils.responseNotification(uid, type, responseTime);
     }
 
     public Integer getThermal_warning() {

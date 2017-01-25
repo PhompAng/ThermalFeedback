@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.example.phompang.thermalfeedback.model.Notification;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -47,14 +49,33 @@ public class NotificationReceiver extends BroadcastReceiver {
                 break;
         }
 
+        Date date = new Date();
         if (state && (tickerText != null)) {
             mReceiverManager.setThermal_warning(thermal_warning);
-            String timeStart = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss", Locale.getDefault()).format(new Date());
+            String timeStart = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss", Locale.getDefault()).format(date);
             Log.d(TAG, "START " + tempPacket + ": " + tickerText + " " + timeStart);
             mReceiverManager.setDelay_warning(0);
+            pushNotification(tempPacket, thermal_warning, date.getTime());
         } else if (!state && (tickerText != null)) {
-            String timeStop = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss", Locale.getDefault()).format(new Date());
+            mReceiverManager.setThermal_warning(0);
+            String timeStop = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss", Locale.getDefault()).format(date);
             Log.d(TAG, "STOP " + tempPacket + ": " + tickerText + " " + timeStop);
+            responseNotification(tempPacket, date.getTime());
         }
+    }
+
+    private void pushNotification(String type, int stimuli, long startTime) {
+        Notification notification = new Notification();
+        notification.setIsReal(true);
+        notification.setType(type);
+        notification.setStimuli(stimuli);
+        notification.setIsThermal(true);
+        notification.setIsVibrate(false);
+        notification.setStartTime(startTime);
+        mReceiverManager.pushNotification(notification);
+    }
+
+    private void responseNotification(String type, long responseTime) {
+        mReceiverManager.responseNotification(type, responseTime);
     }
 }
