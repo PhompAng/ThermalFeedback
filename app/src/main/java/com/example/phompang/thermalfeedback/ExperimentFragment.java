@@ -13,6 +13,11 @@ import android.view.ViewGroup;
 
 import com.example.phompang.thermalfeedback.adapter.NotificationAdapter;
 import com.example.phompang.thermalfeedback.model.Notification;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +37,7 @@ import butterknife.Unbinder;
 public class ExperimentFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String TAG = ExperimentFragment.class.getSimpleName();
     private static final String ARG_PARAM1 = "param1";
 
     private String uid;
@@ -64,11 +70,13 @@ public class ExperimentFragment extends Fragment {
         if (getArguments() != null) {
             this.uid = getArguments().getString(ARG_PARAM1);
         }
+        notifications = new ArrayList<>();
     }
 
     private Unbinder unbinder;
     private NotificationAdapter adapter;
     private List<Notification> notifications;
+    private DatabaseReference reference;
     @BindView(R.id.list)
     RecyclerView list;
 
@@ -82,7 +90,8 @@ public class ExperimentFragment extends Fragment {
 
         ((ExperimentActivity) getActivity()).showTab();
 
-        makeList();
+        reference = FirebaseDatabase.getInstance().getReference();
+        retrieveNotifications();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         adapter = new NotificationAdapter(getContext(), notifications);
         list.setLayoutManager(layoutManager);
@@ -91,13 +100,26 @@ public class ExperimentFragment extends Fragment {
         return v;
     }
 
-    private void makeList() {
-        notifications = new ArrayList<>();
-        notifications.add(new Notification());
-        notifications.add(new Notification());
-        notifications.add(new Notification());
-        notifications.add(new Notification());
-        notifications.add(new Notification());
+    private DatabaseReference notificationRef = reference.child("users").child(uid).child("notificationMap");;
+    private ValueEventListener listener;
+
+    private void retrieveNotifications() {
+        listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                notifications.clear();
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    notifications.add(snapshot.getValue(Notification.class));
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, databaseError.getMessage());
+            }
+        };
+        notificationRef.addValueEventListener(listener);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -127,6 +149,7 @@ public class ExperimentFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        notificationRef.removeEventListener(listener);
         unbinder.unbind();
     }
 
