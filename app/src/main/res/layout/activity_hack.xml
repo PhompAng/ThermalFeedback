@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.phompang.thermalfeedback.HackActivity">
+
+    <com.example.phompang.thermalfeedback.view.Seeker
+        android:id="@+id/hack"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:sk_text="Hack Pluse width"
+        app:sk_min="0"
+        app:sk_max="150"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <Button
+        android:id="@+id/hot"
+        android:tag="Hot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2500 + (Hot * 10)"
+        app:layout_constraintTop_toBottomOf="@+id/hack"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <Button
+        android:id="@+id/cold"
+        android:tag="Cold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="25000 + (cold * 100)"
+        app:layout_constraintTop_toBottomOf="@+id/hack"
+        app:layout_constraintLeft_toRightOf="@+id/hot" />
+
+
+    <TextView
+        android:id="@+id/testing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_whatshot_black_24dp"
+        android:drawableTint="@color/textSecondary"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        android:text="Testing pulse: "
+        app:layout_constraintTop_toBottomOf="@+id/hot"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"/>
+
+
+    <TextView
+        android:id="@+id/duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_schedule_black_24dp"
+        android:drawableTint="@color/textSecondary"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        android:text="Duration: 15 sec"
+        app:layout_constraintTop_toBottomOf="@+id/testing"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"/>
+
+</android.support.constraint.ConstraintLayout>

@@ -66,7 +66,8 @@
         <activity android:name=".AdminActivity" />
         <activity android:name=".UsersActivity" />
         <activity android:name=".TestActivity" />
-        <activity android:name=".AddUserActivity"></activity>
+        <activity android:name=".AddUserActivity" />
+        <activity android:name=".HackActivity"></activity>
     </application>
 
 </manifest>

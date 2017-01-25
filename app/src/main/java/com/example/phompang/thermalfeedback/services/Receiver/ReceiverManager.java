@@ -9,6 +9,7 @@ public class ReceiverManager {
     private int delay_warning;
     private boolean isPause = false;
     private String uid;
+    private int pulseWidth;
 
     private static ReceiverManager sReceiverManager;
 
@@ -52,5 +53,13 @@ public class ReceiverManager {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public int getPulseWidth() {
+        return pulseWidth;
+    }
+
+    public void setPulseWidth(int pulseWidth) {
+        this.pulseWidth = pulseWidth;
     }
 }
