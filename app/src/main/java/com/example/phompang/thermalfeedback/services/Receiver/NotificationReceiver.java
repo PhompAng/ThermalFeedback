@@ -54,7 +54,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             mReceiverManager.setDelay_warning(0);
         } else if (!state && (tickerText != null)) {
             String timeStop = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss", Locale.getDefault()).format(new Date());
-            Log.d(TAG, "START " + tempPacket + ": " + tickerText + " " + timeStop);
+            Log.d(TAG, "STOP " + tempPacket + ": " + tickerText + " " + timeStop);
         }
     }
 }
