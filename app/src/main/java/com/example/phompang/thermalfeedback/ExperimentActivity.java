@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +27,8 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 public class ExperimentActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         OnFragmentInteractionListener, SummaryFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, TabLayout.OnTabSelectedListener {
+
+    private static final String TAG = ExperimentActivity.class.getSimpleName();
 
     private TabLayout tabLayout;
     private FloatingActionsMenu floatingActionsMenu;
@@ -134,6 +137,13 @@ public class ExperimentActivity extends AppCompatActivity
                 })
                 .create();
         builder.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+        stopService(new Intent(getApplicationContext(), ServiceIO1.class));
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
