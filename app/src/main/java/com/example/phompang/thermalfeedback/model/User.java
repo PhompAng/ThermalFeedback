@@ -13,7 +13,7 @@ public class User {
     private String surname;
     private int age;
     private String gender;
-    private Map<String, Notification> notificationMap;
+    private Map<String, Map<String, Notification>> notificationsList;
 
     public User() {
     }
@@ -66,11 +66,11 @@ public class User {
         this.gender = gender;
     }
 
-    public Map<String, Notification> getNotificationMap() {
-        return notificationMap;
+    public Map<String, Map<String, Notification>> getNotificationsList() {
+        return notificationsList;
     }
 
-    public void setNotificationMap(Map<String, Notification> notificationMap) {
-        this.notificationMap = notificationMap;
+    public void setNotificationsList(Map<String, Map<String, Notification>> notificationsList) {
+        this.notificationsList = notificationsList;
     }
 }

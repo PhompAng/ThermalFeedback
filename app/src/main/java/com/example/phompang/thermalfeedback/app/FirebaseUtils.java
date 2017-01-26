@@ -24,29 +24,41 @@ public class FirebaseUtils {
         reference.child("users").child(uid).removeValue();
     }
 
-    public static void addNotification(String uid, Notification notification) {
+    public static void addNotification(String uid, final Notification notification) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        reference.child("users").child(uid).child("notificationMap").push().setValue(notification, new DatabaseReference.CompletionListener() {
+        reference.child("users").child(uid).child("notificationsList").orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onComplete(DatabaseError databaseError, final DatabaseReference databaseReference) {
-                databaseReference.getParent().addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        databaseReference.child("attempt").setValue(dataSnapshot.getChildrenCount());
-                    }
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    snapshot.getRef().push().setValue(notification, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, final DatabaseReference databaseReference) {
+                            databaseReference.getParent().addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    databaseReference.child("attempt").setValue(dataSnapshot.getChildrenCount());
+                                }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
 
     public static void responseNotification(String uid, String type, final long responseTime) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference.child("users").child(uid).child("notificationMap").orderByChild("type").equalTo(type).limitToLast(1);
+        Query query = reference.child("users").child(uid).child("notificationsList").limitToLast(1).getRef().orderByChild("type").equalTo(type).limitToLast(1);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

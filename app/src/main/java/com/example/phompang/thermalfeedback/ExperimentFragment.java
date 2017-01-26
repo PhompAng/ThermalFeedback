@@ -17,6 +17,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -77,6 +78,7 @@ public class ExperimentFragment extends Fragment {
     private NotificationAdapter adapter;
     private List<Notification> notifications;
     private DatabaseReference reference;
+    private long session;
     @BindView(R.id.list)
     RecyclerView list;
 
@@ -91,7 +93,20 @@ public class ExperimentFragment extends Fragment {
         ((ExperimentActivity) getActivity()).showTab();
 
         reference = FirebaseDatabase.getInstance().getReference();
-        retrieveNotifications();
+        reference.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                session = dataSnapshot.child("numberOfSession").getValue(Long.class);
+                dataSnapshot.child("numberOfSession").getRef().setValue(session+1);
+                dataSnapshot.child("notificationsList").getRef().push().setValue(0);
+                retrieveNotifications();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         adapter = new NotificationAdapter(getContext(), notifications);
         list.setLayoutManager(layoutManager);
@@ -100,17 +115,23 @@ public class ExperimentFragment extends Fragment {
         return v;
     }
 
-    private DatabaseReference notificationRef;
+    private Query notificationRef;
     private ValueEventListener listener;
 
     private void retrieveNotifications() {
-        notificationRef = reference.child("users").child(uid).child("notificationMap");
+        notificationRef = reference.child("users").child(uid).child("notificationsList").orderByKey().limitToLast(1);
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 notifications.clear();
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    notifications.add(snapshot.getValue(Notification.class));
+                    for (DataSnapshot noti: snapshot.getChildren()) {
+                        try {
+                            notifications.add(noti.getValue(Notification.class));
+                        } catch (Exception e) {
+                            return;
+                        }
+                    }
                 }
                 adapter.notifyDataSetChanged();
             }
