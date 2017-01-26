@@ -33,7 +33,8 @@
             </intent-filter>
         </service>
         <!-- <service android:name=".app.ServiceIO" /> -->
-        <service android:name=".services.ServiceIO1" />
+        <service android:name=".services.ServiceIO1"
+            android:stopWithTask="true"/>
 
         <activity
             android:name=".MainActivity"
