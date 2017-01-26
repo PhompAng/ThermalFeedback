@@ -24,6 +24,9 @@ public class PhoneListener extends PhoneStateListener {
 
     @Override
     public void onCallStateChanged(int state, String incomingNumber) {
+        if (mReceiverManager.isPause()) {
+            return;
+        }
         boolean memberState;
 
         Random random = new Random();

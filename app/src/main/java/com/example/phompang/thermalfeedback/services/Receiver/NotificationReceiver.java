@@ -26,6 +26,9 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (mReceiverManager.isPause()) {
+            return;
+        }
         String tempPacket = intent.getStringExtra("notification_event");
         String tickerText = intent.getStringExtra("notification_tickerText");
         Boolean state = intent.getBooleanExtra("notification_state", true);

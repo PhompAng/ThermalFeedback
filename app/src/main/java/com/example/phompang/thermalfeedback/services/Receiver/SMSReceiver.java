@@ -26,6 +26,9 @@ public class SMSReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (mReceiverManager.isPause()) {
+            return;
+        }
         SmsMessage[] smsMessages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
         SmsMessage smsMessage = smsMessages[0];
         String senderNum = smsMessage.getDisplayOriginatingAddress();
