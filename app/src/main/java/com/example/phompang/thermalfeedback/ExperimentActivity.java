@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -68,7 +69,7 @@ public class ExperimentActivity extends AppCompatActivity
         intent.putExtra("uid", uid);
         startService(intent);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.flContent, ExperimentFragment.newInstance(uid)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.flContent, ExperimentFragment.newInstance(uid, 0), "exp").commit();
     }
 
     @Override
@@ -152,7 +153,7 @@ public class ExperimentActivity extends AppCompatActivity
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         switch (item.getItemId()) {
             case R.id.action_home:
-                fragmentTransaction.replace(R.id.flContent, ExperimentFragment.newInstance(uid)).commit();
+                fragmentTransaction.replace(R.id.flContent, ExperimentFragment.newInstance(uid, 0), "exp").commit();
                 break;
             case R.id.action_profile:
                 tabLayout.setVisibility(View.GONE);
@@ -202,12 +203,10 @@ public class ExperimentActivity extends AppCompatActivity
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//        if (playing) {
-//            fragmentTransaction.replace(R.id.flContent, ExperimentFragment.newInstance(tab.getPosition())).commit();
-//        } else {
-//            fragmentTransaction.replace(R.id.flContent, SummaryFragment.newInstance(tab.getPosition())).commit();
-//        }
+        Fragment exp = getSupportFragmentManager().findFragmentByTag("exp");
+        if (exp != null && exp.isVisible()) {
+            ((ExperimentFragment) exp).setNotiType(tab.getPosition());
+        }
     }
 
     @Override

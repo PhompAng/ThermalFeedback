@@ -39,9 +39,11 @@ public class ExperimentFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String TAG = ExperimentFragment.class.getSimpleName();
-    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM1 = "uid";
+    private static final String ARG_PARAM2 = "notiType";
 
     private String uid;
+    private int notiType;
 
     private OnFragmentInteractionListener mListener;
 
@@ -57,10 +59,11 @@ public class ExperimentFragment extends Fragment {
      * @return A new instance of fragment ExperimentFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ExperimentFragment newInstance(String uid) {
+    public static ExperimentFragment newInstance(String uid, int notiType) {
         ExperimentFragment fragment = new ExperimentFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, uid);
+        args.putInt(ARG_PARAM2, notiType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,6 +73,7 @@ public class ExperimentFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.uid = getArguments().getString(ARG_PARAM1);
+            this.notiType = getArguments().getInt(ARG_PARAM2);
         }
         notifications = new ArrayList<>();
     }
@@ -127,7 +131,22 @@ public class ExperimentFragment extends Fragment {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     for (DataSnapshot noti: snapshot.getChildren()) {
                         try {
-                            notifications.add(noti.getValue(Notification.class));
+                            Notification notification = noti.getValue(Notification.class);
+                            switch (notiType) {
+                                case 1:
+                                    if (notification.isReal()) {
+                                        notifications.add(notification);
+                                    }
+                                    break;
+                                case 2:
+                                    if (!notification.isReal()) {
+                                        notifications.add(notification);
+                                    }
+                                    break;
+                                default:
+                                    notifications.add(notification);
+                                    break;
+                            }
                         } catch (Exception e) {
                             return;
                         }
@@ -173,6 +192,11 @@ public class ExperimentFragment extends Fragment {
         super.onDestroyView();
         notificationRef.removeEventListener(listener);
         unbinder.unbind();
+    }
+
+    public void setNotiType(int notiType) {
+        this.notiType = notiType;
+        retrieveNotifications();
     }
 
     /**
