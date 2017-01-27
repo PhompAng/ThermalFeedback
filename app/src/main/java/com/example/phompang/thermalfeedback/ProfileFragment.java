@@ -4,10 +4,26 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
+import com.example.phompang.thermalfeedback.model.User;
+import com.example.phompang.thermalfeedback.view.ProfileInput;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 
 /**
@@ -21,11 +37,11 @@ import android.view.ViewGroup;
 public class ProfileFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_UID = "uid";
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String uid;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
@@ -38,15 +54,15 @@ public class ProfileFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
+     * @param uid Parameter 1.
      * @param param2 Parameter 2.
      * @return A new instance of fragment ProfileFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
+    public static ProfileFragment newInstance(String uid, String param2) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_UID, uid);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
@@ -56,17 +72,74 @@ public class ProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            uid = getArguments().getString(ARG_UID);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         setHasOptionsMenu(true);
     }
 
+    private Unbinder unbinder;
+    private DatabaseReference reference;
+    @BindView(R.id.id)
+    ProfileInput id;
+    @BindView(R.id.session)
+    ProfileInput session;
+    @BindView(R.id.name)
+    ProfileInput name;
+    @BindView(R.id.surname)
+    ProfileInput surname;
+    @BindView(R.id.age)
+    ProfileInput age;
+    @BindView(R.id.gender)
+    RadioGroup gender;
+    @BindView(R.id.submit)
+    Button submit;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        unbinder = ButterKnife.bind(this, v);
+
+        Log.d("profile", uid);
+
+        reference = FirebaseDatabase.getInstance().getReference();
+        retrieveProfile();
+
+        return v;
+    }
+
+    private User user;
+
+    private void retrieveProfile() {
+        reference.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                user = dataSnapshot.getValue(User.class);
+                setValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void setValue() {
+        id.setText(user.getUid());
+        session.setText(Integer.toString(user.getNumberOfSession()));
+        name.setText(user.getName());
+        surname.setText(user.getSurname());
+        age.setText(Integer.toString(user.getAge()));
+        ((RadioButton) gender.findViewWithTag(user.getGender())).setChecked(true);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -157,7 +157,7 @@ public class ExperimentActivity extends AppCompatActivity
                 break;
             case R.id.action_profile:
                 tabLayout.setVisibility(View.GONE);
-                fragmentTransaction.replace(R.id.flContent, ProfileFragment.newInstance("test", "test")).addToBackStack(null).commit();
+                fragmentTransaction.replace(R.id.flContent, ProfileFragment.newInstance(uid, "test")).addToBackStack(null).commit();
                 break;
             case R.id.action_contact:
                 tabLayout.setVisibility(View.GONE);

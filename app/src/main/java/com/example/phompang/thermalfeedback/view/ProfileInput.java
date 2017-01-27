@@ -75,6 +75,10 @@ public class ProfileInput extends FrameLayout {
         text.setInputType(inputType);
     }
 
+    public void setText(String text) {
+        this.text.setText(text);
+    }
+
     public CharSequence getText() {
         return text.getText();
     }
