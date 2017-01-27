@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -15,6 +16,12 @@ import android.widget.Spinner;
 
 import com.example.phompang.thermalfeedback.adapter.SummaryAdapter;
 import com.example.phompang.thermalfeedback.model.Notification;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static android.content.ContentValues.TAG;
 import static com.example.phompang.thermalfeedback.R.id.day;
 
 /**
@@ -37,9 +45,11 @@ import static com.example.phompang.thermalfeedback.R.id.day;
 public class SummaryFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM1 = "uid";
+    private static final String ARG_PARAM2 = "notiType";
 
-    private int mParam1;
+    private String uid;
+    private int notiType;
 
     private OnFragmentInteractionListener mListener;
 
@@ -55,10 +65,11 @@ public class SummaryFragment extends Fragment {
      * @return A new instance of fragment SummaryFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SummaryFragment newInstance(int param1) {
+    public static SummaryFragment newInstance(String uid, int notiType) {
         SummaryFragment fragment = new SummaryFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM1, uid);
+        args.putInt(ARG_PARAM2, notiType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,14 +78,17 @@ public class SummaryFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getInt(ARG_PARAM1);
+            this.uid = getArguments().getString(ARG_PARAM1);
+            this.notiType = getArguments().getInt(ARG_PARAM2);
         }
         setHasOptionsMenu(true);
+        notifications = new ArrayList<>();
     }
 
     private Unbinder unbinder;
     private SummaryAdapter adapter;
     private List<Notification> notifications;
+    private DatabaseReference reference;
     @BindView(day)
     Spinner spinner;
     @BindView(R.id.list)
@@ -88,11 +102,15 @@ public class SummaryFragment extends Fragment {
 
         ((ExperimentActivity) getActivity()).showTab();
 
+        reference = FirebaseDatabase.getInstance().getReference();
+
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, Arrays.asList(new String[]{"Day 1", "Day 2", "Day 3"}));
         spinner.setAdapter(arrayAdapter);
 
-        makeList();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        retrieveNotifications();
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, true);
+        layoutManager.setStackFromEnd(true);
         adapter = new SummaryAdapter(getContext(), notifications);
         list.setLayoutManager(layoutManager);
         list.setAdapter(adapter);
@@ -100,13 +118,48 @@ public class SummaryFragment extends Fragment {
         return v;
     }
 
-    private void makeList() {
-        notifications = new ArrayList<>();
-        notifications.add(new Notification());
-        notifications.add(new Notification());
-        notifications.add(new Notification());
-        notifications.add(new Notification());
-        notifications.add(new Notification());
+    private Query notificationRef;
+    private ValueEventListener listener;
+
+    private void retrieveNotifications() {
+        notificationRef = reference.child("notifications").child(uid).orderByKey().limitToLast(1);
+        listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                notifications.clear();
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    for (DataSnapshot noti: snapshot.getChildren()) {
+                        try {
+                            Notification notification = noti.getValue(Notification.class);
+                            switch (notiType) {
+                                case 1:
+                                    if (notification.isReal()) {
+                                        notifications.add(notification);
+                                    }
+                                    break;
+                                case 2:
+                                    if (!notification.isReal()) {
+                                        notifications.add(notification);
+                                    }
+                                    break;
+                                default:
+                                    notifications.add(notification);
+                                    break;
+                            }
+                        } catch (Exception e) {
+                            return;
+                        }
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, databaseError.getMessage());
+            }
+        };
+        notificationRef.addValueEventListener(listener);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -143,7 +196,13 @@ public class SummaryFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        notificationRef.removeEventListener(listener);
         unbinder.unbind();
+    }
+
+    public void setNotiType(int notiType) {
+        this.notiType = notiType;
+        retrieveNotifications();
     }
 
     /**

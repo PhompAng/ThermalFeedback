@@ -127,7 +127,7 @@ public class ExperimentActivity extends AppCompatActivity
                         //TODO Validate
                         stopService(new Intent(getApplicationContext(), ServiceIO1.class));
                         dialog.dismiss();
-                        getSupportFragmentManager().beginTransaction().replace(R.id.flContent, SummaryFragment.newInstance(0)).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.flContent, SummaryFragment.newInstance(uid, 0), "summary").commit();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -206,6 +206,10 @@ public class ExperimentActivity extends AppCompatActivity
         Fragment exp = getSupportFragmentManager().findFragmentByTag("exp");
         if (exp != null && exp.isVisible()) {
             ((ExperimentFragment) exp).setNotiType(tab.getPosition());
+        }
+        Fragment summary = getSupportFragmentManager().findFragmentByTag("summary");
+        if (summary != null && summary.isVisible()) {
+            ((SummaryFragment) summary).setNotiType(tab.getPosition());
         }
     }
 
