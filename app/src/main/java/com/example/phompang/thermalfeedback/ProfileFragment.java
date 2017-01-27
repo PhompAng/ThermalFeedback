@@ -106,6 +106,8 @@ public class ProfileFragment extends Fragment {
         unbinder = ButterKnife.bind(this, v);
 
         Log.d("profile", uid);
+        id.setEnabled(false);
+        session.setEnabled(false);
 
         reference = FirebaseDatabase.getInstance().getReference();
         retrieveProfile();

@@ -86,4 +86,9 @@ public class ProfileInput extends FrameLayout {
     public void setError(String error) {
         text.setError(error);
     }
+
+    public void setEnabled(boolean enabled) {
+        text.setEnabled(enabled);
+        text.setFocusable(enabled);
+    }
 }
