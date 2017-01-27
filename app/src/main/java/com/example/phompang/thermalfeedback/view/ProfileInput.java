@@ -82,4 +82,8 @@ public class ProfileInput extends FrameLayout {
     public CharSequence getText() {
         return text.getText();
     }
+
+    public void setError(String error) {
+        text.setError(error);
+    }
 }

@@ -19,6 +19,11 @@ public class FirebaseUtils {
         reference.child("users").child(u.getUid()).setValue(u);
     }
 
+    public static void updateUser(String uid, User user) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        reference.child("users").child(uid).setValue(user);
+    }
+
     public static void deleteUser(String uid) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         reference.child("users").child(uid).removeValue();

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.example.phompang.thermalfeedback.app.FirebaseUtils;
 import com.example.phompang.thermalfeedback.model.User;
 import com.example.phompang.thermalfeedback.view.ProfileInput;
 import com.google.firebase.database.DataSnapshot;
@@ -23,6 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 
@@ -125,6 +128,44 @@ public class ProfileFragment extends Fragment {
 
             }
         });
+    }
+
+    @OnClick(R.id.submit)
+    public void validate() {
+        boolean cancel = false;
+        View focusView = null;
+
+        if (TextUtils.isEmpty(age.getText().toString())) {
+            age.setError(getString(R.string.required));
+            focusView = age;
+            cancel = true;
+        }
+        if (TextUtils.isEmpty(surname.getText().toString())) {
+            surname.setError(getString(R.string.required));
+            focusView = surname;
+            cancel = true;
+        }
+        if (TextUtils.isEmpty(name.getText().toString())) {
+            name.setError(getString(R.string.required));
+            focusView = name;
+            cancel = true;
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
+        } else {
+            updateUser();
+        }
+    }
+
+    private void updateUser() {
+        user.setName(name.getText().toString());
+        user.setSurname(surname.getText().toString());
+        user.setAge(Integer.parseInt(age.getText().toString()));
+        user.setGender((String) gender.findViewById(gender.getCheckedRadioButtonId()).getTag());
+
+        FirebaseUtils.updateUser(uid, user);
+        getFragmentManager().popBackStack();
     }
 
     private void setValue() {
