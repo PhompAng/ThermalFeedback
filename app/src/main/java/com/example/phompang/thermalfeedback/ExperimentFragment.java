@@ -103,7 +103,7 @@ public class ExperimentFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 session = dataSnapshot.child("numberOfSession").getValue(Long.class);
                 dataSnapshot.child("numberOfSession").getRef().setValue(session+1);
-                dataSnapshot.child("notificationsList").getRef().push().setValue(0);
+                reference.child("notifications").child(uid).getRef().push().setValue(0);
                 retrieveNotifications();
             }
 
@@ -124,7 +124,7 @@ public class ExperimentFragment extends Fragment {
     private ValueEventListener listener;
 
     private void retrieveNotifications() {
-        notificationRef = reference.child("users").child(uid).child("notificationsList").orderByKey().limitToLast(1);
+        notificationRef = reference.child("notifications").child(uid).orderByKey().limitToLast(1);
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -191,7 +191,7 @@ public class ExperimentFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        reference.child("users").child(uid).child("notificationsList").addListenerForSingleValueEvent(new ValueEventListener() {
+        reference.child("notifications").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {

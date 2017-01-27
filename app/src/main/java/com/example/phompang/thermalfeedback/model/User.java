@@ -1,7 +1,5 @@
 package com.example.phompang.thermalfeedback.model;
 
-import java.util.Map;
-
 /**
  * Created by phompang on 12/29/2016 AD.
  */
@@ -13,7 +11,6 @@ public class User {
     private String surname;
     private int age;
     private String gender;
-    private Map<String, Map<String, Notification>> notificationsList;
 
     public User() {
     }
@@ -64,13 +61,5 @@ public class User {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public Map<String, Map<String, Notification>> getNotificationsList() {
-        return notificationsList;
-    }
-
-    public void setNotificationsList(Map<String, Map<String, Notification>> notificationsList) {
-        this.notificationsList = notificationsList;
     }
 }

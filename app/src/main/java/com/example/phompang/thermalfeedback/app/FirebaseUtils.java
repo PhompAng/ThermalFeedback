@@ -31,7 +31,7 @@ public class FirebaseUtils {
 
     public static void addNotification(String uid, final Notification notification) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        reference.child("users").child(uid).child("notificationsList").orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+        reference.child("notifications").child(uid).orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
@@ -61,14 +61,26 @@ public class FirebaseUtils {
         });
     }
 
-    public static void responseNotification(String uid, String type, final long responseTime) {
+    public static void responseNotification(String uid, final String type, final long responseTime) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference.child("users").child(uid).child("notificationsList").limitToLast(1).getRef().orderByChild("type").equalTo(type).limitToLast(1);
+        Query query = reference.child("notifications").child(uid).limitToLast(1);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    snapshot.getRef().child("responseTime").setValue(responseTime);
+                    snapshot.getRef().orderByChild("type").equalTo(type).limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot latestNoti: dataSnapshot.getChildren()) {
+                                latestNoti.getRef().child("responseTime").setValue(responseTime);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
 
