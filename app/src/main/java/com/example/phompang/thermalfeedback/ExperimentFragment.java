@@ -112,7 +112,8 @@ public class ExperimentFragment extends Fragment {
 
             }
         });
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, true);
+        layoutManager.setStackFromEnd(true);
         adapter = new NotificationAdapter(getContext(), notifications);
         list.setLayoutManager(layoutManager);
         list.setAdapter(adapter);
