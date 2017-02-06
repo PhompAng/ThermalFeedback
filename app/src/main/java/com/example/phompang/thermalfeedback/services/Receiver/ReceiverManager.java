@@ -35,6 +35,10 @@ public class ReceiverManager {
         FirebaseUtils.responseNotification(uid, day, type, responseTime);
     }
 
+    public void endCallNotification(long endTime) {
+        FirebaseUtils.endCallNotification(uid, day, "Incoming Call", endTime);
+    }
+
     public Integer getThermal_warning() {
         return thermal_warning;
     }
