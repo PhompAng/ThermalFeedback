@@ -41,7 +41,12 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
         Notification notification = notifications.get(position);
         if (notification.getType().equals("Incoming Call")) {
-            //TODO show hidden view
+            holder.contact.setVisibility(View.VISIBLE);
+            holder.contact.setText(notification.getPhone());
+            holder.isContact.setVisibility(View.VISIBLE);
+            holder.isContact.setText(Boolean.toString(notification.getIsContact()));
+            holder.endTime.setVisibility(View.VISIBLE);
+            holder.endTime.setText(DateTimeUtils.toDateString(notification.getEndTime()));
         }
 
         holder.title.setText(notification.getType());
