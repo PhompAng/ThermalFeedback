@@ -50,6 +50,8 @@ public class NotificationReceiver extends BroadcastReceiver {
             case "com.whatsapp":
                 thermal_warning = 4;
                 break;
+            default:
+                return;
         }
 
         Date date = new Date();
