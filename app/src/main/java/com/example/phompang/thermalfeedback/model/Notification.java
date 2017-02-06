@@ -20,6 +20,11 @@ public class Notification {
     public Notification() {
     }
 
+    @Override
+    public String toString() {
+        return getType() + ":" + getStartTime();
+    }
+
     public int getAttempt() {
         return attempt;
     }
@@ -28,12 +33,12 @@ public class Notification {
         this.attempt = attempt;
     }
 
-    public boolean isReal() {
+    public boolean getIsReal() {
         return isReal;
     }
 
     public void setIsReal(boolean real) {
-        setReal(real);
+        isReal = real;
     }
 
     public String getType() {
@@ -60,28 +65,28 @@ public class Notification {
         this.stimuli = stimuli;
     }
 
-    public boolean isContact() {
+    public boolean getIsContact() {
         return isContact;
     }
 
     public void setIsContact(boolean contact) {
-        setContact(contact);
+        isContact = contact;
     }
 
-    public boolean isThermal() {
+    public boolean getIsThermal() {
         return isThermal;
     }
 
     public void setIsThermal(boolean thermal) {
-        setThermal(thermal);
+        isThermal = thermal;
     }
 
-    public boolean isVibrate() {
+    public boolean getIsVibrate() {
         return isVibrate;
     }
 
     public void setIsVibrate(boolean vibrate) {
-        setVibrate(vibrate);
+        isVibrate = vibrate;
     }
 
     public long getStartTime() {
@@ -106,26 +111,5 @@ public class Notification {
 
     public void setEndTime(long endTime) {
         this.endTime = endTime;
-    }
-
-    public void setReal(boolean real) {
-        isReal = real;
-    }
-
-    public void setContact(boolean contact) {
-        isContact = contact;
-    }
-
-    public void setThermal(boolean thermal) {
-        isThermal = thermal;
-    }
-
-    public void setVibrate(boolean vibrate) {
-        isVibrate = vibrate;
-    }
-
-    @Override
-    public String toString() {
-        return getType() + ":" + getStartTime();
     }
 }

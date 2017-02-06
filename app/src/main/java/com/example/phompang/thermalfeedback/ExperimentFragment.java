@@ -138,12 +138,12 @@ public class ExperimentFragment extends Fragment {
                         Notification notification = noif.getValue(Notification.class);
                         switch (notiType) {
                             case 1:
-                                if (notification.isReal()) {
+                                if (notification.getIsReal()) {
                                     notifications.add(notification);
                                 }
                                 break;
                             case 2:
-                                if (!notification.isReal()) {
+                                if (!notification.getIsReal()) {
                                     notifications.add(notification);
                                 }
                                 break;
