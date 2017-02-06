@@ -34,6 +34,7 @@ public class ExperimentActivity extends AppCompatActivity
     private TabLayout tabLayout;
     private FloatingActionsMenu floatingActionsMenu;
     private String uid;
+    private int day;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class ExperimentActivity extends AppCompatActivity
 
         if (getIntent() != null) {
             uid = getIntent().getStringExtra("uid");
+            day = getIntent().getIntExtra("day", 1);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -67,9 +69,10 @@ public class ExperimentActivity extends AppCompatActivity
 
         Intent intent = new Intent(getApplicationContext(), ServiceIO1.class);
         intent.putExtra("uid", uid);
+        intent.putExtra("day", day);
         startService(intent);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.flContent, ExperimentFragment.newInstance(uid, 0), "exp").commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.flContent, ExperimentFragment.newInstance(uid, 0, day), "exp").commit();
     }
 
     @Override
@@ -141,6 +144,20 @@ public class ExperimentActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("uid", uid);
+        outState.putInt("day", day);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        uid = savedInstanceState.getString("uid");
+        day = savedInstanceState.getInt("day");
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
@@ -153,7 +170,7 @@ public class ExperimentActivity extends AppCompatActivity
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         switch (item.getItemId()) {
             case R.id.action_home:
-                fragmentTransaction.replace(R.id.flContent, ExperimentFragment.newInstance(uid, 0), "exp").commit();
+                fragmentTransaction.replace(R.id.flContent, ExperimentFragment.newInstance(uid, 0, day), "exp").commit();
                 break;
             case R.id.action_profile:
                 tabLayout.setVisibility(View.GONE);

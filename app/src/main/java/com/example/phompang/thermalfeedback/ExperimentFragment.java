@@ -22,7 +22,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,9 +41,11 @@ public class ExperimentFragment extends Fragment {
     private static final String TAG = ExperimentFragment.class.getSimpleName();
     private static final String ARG_PARAM1 = "uid";
     private static final String ARG_PARAM2 = "notiType";
+    private static final String ARG_PARAM3 = "day";
 
     private String uid;
     private int notiType;
+    private int day;
 
     private OnFragmentInteractionListener mListener;
 
@@ -60,11 +61,12 @@ public class ExperimentFragment extends Fragment {
      * @return A new instance of fragment ExperimentFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ExperimentFragment newInstance(String uid, int notiType) {
+    public static ExperimentFragment newInstance(String uid, int notiType, int day) {
         ExperimentFragment fragment = new ExperimentFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, uid);
         args.putInt(ARG_PARAM2, notiType);
+        args.putInt(ARG_PARAM3, day);
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,6 +77,7 @@ public class ExperimentFragment extends Fragment {
         if (getArguments() != null) {
             this.uid = getArguments().getString(ARG_PARAM1);
             this.notiType = getArguments().getInt(ARG_PARAM2);
+            this.day = getArguments().getInt(ARG_PARAM3);
         }
         notifications = new ArrayList<>();
     }
@@ -103,8 +106,7 @@ public class ExperimentFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 session = dataSnapshot.child("numberOfSession").getValue(Long.class);
                 dataSnapshot.child("numberOfSession").getRef().setValue(session+1);
-                reference.child("notifications").child(uid).getRef().push().setValue(0);
-                retrieveNotifications();
+//                reference.child("notifications").child(uid).getRef().push().setValue(0);
             }
 
             @Override
@@ -112,6 +114,7 @@ public class ExperimentFragment extends Fragment {
 
             }
         });
+        retrieveNotifications();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, true);
         layoutManager.setStackFromEnd(true);
         adapter = new NotificationAdapter(getContext(), notifications);
@@ -125,33 +128,31 @@ public class ExperimentFragment extends Fragment {
     private ValueEventListener listener;
 
     private void retrieveNotifications() {
-        notificationRef = reference.child("notifications").child(uid).orderByKey().limitToLast(1);
+        notificationRef = reference.child("notifications").child(uid).child(String.valueOf(day));
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 notifications.clear();
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    for (DataSnapshot noti: snapshot.getChildren()) {
-                        try {
-                            Notification notification = noti.getValue(Notification.class);
-                            switch (notiType) {
-                                case 1:
-                                    if (notification.isReal()) {
-                                        notifications.add(notification);
-                                    }
-                                    break;
-                                case 2:
-                                    if (!notification.isReal()) {
-                                        notifications.add(notification);
-                                    }
-                                    break;
-                                default:
+                for (DataSnapshot noif: dataSnapshot.getChildren()) {
+                    try {
+                        Notification notification = noif.getValue(Notification.class);
+                        switch (notiType) {
+                            case 1:
+                                if (notification.isReal()) {
                                     notifications.add(notification);
-                                    break;
-                            }
-                        } catch (Exception e) {
-                            return;
+                                }
+                                break;
+                            case 2:
+                                if (!notification.isReal()) {
+                                    notifications.add(notification);
+                                }
+                                break;
+                            default:
+                                notifications.add(notification);
+                                break;
                         }
+                    } catch (Exception e) {
+                        return;
                     }
                 }
                 adapter.notifyDataSetChanged();
@@ -192,23 +193,23 @@ public class ExperimentFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        reference.child("notifications").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    try {
-                        Map<String, Notification> value = (Map<String, Notification>) snapshot.getValue();
-                    } catch (Exception e) {
-                        snapshot.getRef().removeValue();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+//        reference.child("notifications").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+//                    try {
+//                        Map<String, Notification> value = (Map<String, Notification>) snapshot.getValue();
+//                    } catch (Exception e) {
+//                        snapshot.getRef().removeValue();
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
     }
 
     @Override

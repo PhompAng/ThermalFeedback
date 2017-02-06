@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.google.firebase.database.DataSnapshot;
@@ -82,6 +83,8 @@ public class MainFragment extends Fragment {
 
     @BindView(R.id.user)
     Spinner user;
+    @BindView(R.id.day_group)
+    RadioGroup radioGroup;
     @BindView(R.id.start_btn)
     Button start;
     private List<String> users;
@@ -128,13 +131,14 @@ public class MainFragment extends Fragment {
     }
     @OnClick(R.id.start_btn)
     public void start() {
-        onButtonPressed(uid);
+        int day = Integer.parseInt((String) radioGroup.findViewById(radioGroup.getCheckedRadioButtonId()).getTag());
+        onButtonPressed(uid, day);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(String uid) {
+    public void onButtonPressed(String uid, int day) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uid);
+            mListener.onFragmentInteraction(uid, day);
         }
     }
 
@@ -173,6 +177,6 @@ public class MainFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(String uid);
+        void onFragmentInteraction(String uid, int day);
     }
 }

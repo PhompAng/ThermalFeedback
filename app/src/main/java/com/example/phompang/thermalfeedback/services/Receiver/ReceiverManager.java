@@ -12,6 +12,7 @@ public class ReceiverManager {
     private int delay_warning;
     private boolean isPause = false;
     private String uid;
+    private int day;
     private int pulseWidth;
 
     private static ReceiverManager sReceiverManager;
@@ -27,11 +28,11 @@ public class ReceiverManager {
     }
 
     public void pushNotification(Notification notification) {
-        FirebaseUtils.addNotification(uid, notification);
+        FirebaseUtils.addNotification(uid, day, notification);
     }
 
     public void responseNotification(String type, long responseTime) {
-        FirebaseUtils.responseNotification(uid, type, responseTime);
+        FirebaseUtils.responseNotification(uid, day, type, responseTime);
     }
 
     public Integer getThermal_warning() {
@@ -72,5 +73,13 @@ public class ReceiverManager {
 
     public void setPulseWidth(int pulseWidth) {
         this.pulseWidth = pulseWidth;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
     }
 }

@@ -31,9 +31,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     }
 
     @Override
-    public void onFragmentInteraction(String uid) {
+    public void onFragmentInteraction(String uid, int day) {
         Intent intent = new Intent(MainActivity.this, ExperimentActivity.class);
         intent.putExtra("uid", uid);
+        intent.putExtra("day", day);
         startActivity(intent);
     }
 

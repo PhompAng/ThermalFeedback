@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -32,7 +33,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 import static android.content.ContentValues.TAG;
-import static com.example.phompang.thermalfeedback.R.id.day;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,6 +50,7 @@ public class SummaryFragment extends Fragment {
 
     private String uid;
     private int notiType;
+    private int day;
 
     private OnFragmentInteractionListener mListener;
 
@@ -61,7 +62,6 @@ public class SummaryFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
      * @return A new instance of fragment SummaryFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -89,7 +89,7 @@ public class SummaryFragment extends Fragment {
     private SummaryAdapter adapter;
     private List<Notification> notifications;
     private DatabaseReference reference;
-    @BindView(day)
+    @BindView(R.id.day)
     Spinner spinner;
     @BindView(R.id.list)
     RecyclerView list;
@@ -106,6 +106,20 @@ public class SummaryFragment extends Fragment {
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, Arrays.asList(new String[]{"Day 1", "Day 2", "Day 3"}));
         spinner.setAdapter(arrayAdapter);
+        day = spinner.getSelectedItemPosition() + 1;
+        Log.d("day", String.valueOf(day));
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                day = position + 1;
+                retrieveNotifications();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         retrieveNotifications();
 
@@ -122,33 +136,31 @@ public class SummaryFragment extends Fragment {
     private ValueEventListener listener;
 
     private void retrieveNotifications() {
-        notificationRef = reference.child("notifications").child(uid).orderByKey().limitToLast(1);
+        notificationRef = reference.child("notifications").child(uid).child(String.valueOf(day));
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 notifications.clear();
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    for (DataSnapshot noti: snapshot.getChildren()) {
-                        try {
-                            Notification notification = noti.getValue(Notification.class);
-                            switch (notiType) {
-                                case 1:
-                                    if (notification.isReal()) {
-                                        notifications.add(notification);
-                                    }
-                                    break;
-                                case 2:
-                                    if (!notification.isReal()) {
-                                        notifications.add(notification);
-                                    }
-                                    break;
-                                default:
+                for (DataSnapshot noti: dataSnapshot.getChildren()) {
+                    try {
+                        Notification notification = noti.getValue(Notification.class);
+                        switch (notiType) {
+                            case 1:
+                                if (notification.isReal()) {
                                     notifications.add(notification);
-                                    break;
-                            }
-                        } catch (Exception e) {
-                            return;
+                                }
+                                break;
+                            case 2:
+                                if (!notification.isReal()) {
+                                    notifications.add(notification);
+                                }
+                                break;
+                            default:
+                                notifications.add(notification);
+                                break;
                         }
+                    } catch (Exception e) {
+                        return;
                     }
                 }
                 adapter.notifyDataSetChanged();

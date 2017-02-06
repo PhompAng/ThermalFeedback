@@ -37,6 +37,7 @@ public class ServiceIO1 extends IOIOService {
     Vibrator v;
 
     private String uid;
+    private int day;
 
     @Override
     public void onStart(Intent intent, int startId) {
@@ -48,7 +49,9 @@ public class ServiceIO1 extends IOIOService {
 
         if (intent.getStringExtra("uid") != null) {
             uid = intent.getStringExtra("uid");
+            day = intent.getIntExtra("day", 1);
             manager.setUid(uid);
+            manager.setDay(day);
         }
 
         mNotificationReceiver = new NotificationReceiver(manager);

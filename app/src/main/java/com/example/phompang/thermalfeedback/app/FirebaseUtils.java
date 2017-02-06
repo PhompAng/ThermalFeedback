@@ -29,58 +29,34 @@ public class FirebaseUtils {
         reference.child("users").child(uid).removeValue();
     }
 
-    public static void addNotification(String uid, final Notification notification) {
+    public static void addNotification(String uid, int day, final Notification notification) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        reference.child("notifications").child(uid).orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+        reference.child("notifications").child(uid).child(String.valueOf(day)).push().setValue(notification, new DatabaseReference.CompletionListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    snapshot.getRef().push().setValue(notification, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError, final DatabaseReference databaseReference) {
-                            databaseReference.getParent().addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    databaseReference.child("attempt").setValue(dataSnapshot.getChildrenCount());
-                                }
+            public void onComplete(DatabaseError databaseError, final DatabaseReference databaseReference) {
+                databaseReference.getParent().addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        databaseReference.child("attempt").setValue(dataSnapshot.getChildrenCount());
+                    }
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+                    }
+                });
             }
         });
     }
 
-    public static void responseNotification(String uid, final String type, final long responseTime) {
+    public static void responseNotification(String uid, int day, final String type, final long responseTime) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference.child("notifications").child(uid).limitToLast(1);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query query = reference.child("notifications").child(uid).child(String.valueOf(day));
+        query.orderByChild("type").equalTo(type).limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    snapshot.getRef().orderByChild("type").equalTo(type).limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            for (DataSnapshot latestNoti: dataSnapshot.getChildren()) {
-                                latestNoti.getRef().child("responseTime").setValue(responseTime);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+                for (DataSnapshot latestNoti: dataSnapshot.getChildren()) {
+                    latestNoti.getRef().child("responseTime").setValue(responseTime);
                 }
             }
 
