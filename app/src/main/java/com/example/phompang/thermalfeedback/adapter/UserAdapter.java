@@ -68,17 +68,26 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
             this.listener = listener;
             delete.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             if (listener != null) {
-                listener.onDelete(getAdapterPosition());
+                switch (v.getId()) {
+                    case R.id.delete:
+                        listener.onDelete(getAdapterPosition());
+                        break;
+                    default:
+                        listener.onView(getAdapterPosition());
+                        break;
+                }
             }
         }
 
         public interface OnUserClickListener {
             void onDelete(int position);
+            void onView(int position);
         }
     }
 }

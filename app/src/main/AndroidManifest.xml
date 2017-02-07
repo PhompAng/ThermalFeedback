@@ -33,8 +33,9 @@
             </intent-filter>
         </service>
         <!-- <service android:name=".app.ServiceIO" /> -->
-        <service android:name=".services.ServiceIO1"
-            android:stopWithTask="true"/>
+        <service
+            android:name=".services.ServiceIO1"
+            android:stopWithTask="true" />
 
         <activity
             android:name=".MainActivity"
@@ -69,6 +70,7 @@
         <activity android:name=".TestActivity" />
         <activity android:name=".AddUserActivity" />
         <activity android:name=".HackActivity" />
+        <activity android:name=".ViewActivity"></activity>
     </application>
 
 </manifest>

@@ -100,7 +100,12 @@ public class SummaryFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_summary, container, false);
         unbinder = ButterKnife.bind(this, v);
 
-        ((ExperimentActivity) getActivity()).showTab();
+
+        try {
+            ((ExperimentActivity) getActivity()).showTab();
+        } catch (RuntimeException e) {
+
+        }
 
         reference = FirebaseDatabase.getInstance().getReference();
 

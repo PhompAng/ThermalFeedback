@@ -112,6 +112,14 @@ public class UsersActivity extends AppCompatActivity implements UserAdapter.View
         deleteDialog(uid);
     }
 
+    @Override
+    public void onView(int position) {
+        String uid = users.get(position).getUid();
+        Intent intent = new Intent(this, ViewActivity.class);
+        intent.putExtra("uid", uid);
+        startActivity(intent);
+    }
+
     private void deleteDialog(final String uid) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Delete User")
