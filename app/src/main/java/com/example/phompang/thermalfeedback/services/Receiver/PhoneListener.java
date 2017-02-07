@@ -2,6 +2,7 @@ package com.example.phompang.thermalfeedback.services.Receiver;
 
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.phompang.thermalfeedback.model.Notification;
@@ -26,7 +27,7 @@ public class PhoneListener extends PhoneStateListener {
 
     @Override
     public void onCallStateChanged(int state, String incomingNumber) {
-        if (mReceiverManager.isPause()) {
+        if (mReceiverManager.isPause() || TextUtils.isEmpty(incomingNumber)) {
             return;
         }
         boolean memberState;
