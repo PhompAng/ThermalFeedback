@@ -1,5 +1,7 @@
 package com.example.phompang.thermalfeedback;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -107,7 +109,27 @@ public class UsersActivity extends AppCompatActivity implements UserAdapter.View
     @Override
     public void onDelete(int position) {
         String uid = users.get(position).getUid();
-        FirebaseUtils.deleteUser(uid);
-        Snackbar.make(layout, "Delete Successful", Snackbar.LENGTH_SHORT).show();
+        deleteDialog(uid);
+    }
+
+    private void deleteDialog(final String uid) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete User")
+                .setMessage("Do you wat to delete " + uid)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FirebaseUtils.deleteUser(uid);
+                        Snackbar.make(layout, "Delete Successful", Snackbar.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
     }
 }
