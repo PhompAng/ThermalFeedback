@@ -178,7 +178,7 @@ public class ExperimentActivity extends AppCompatActivity
                 break;
             case R.id.action_contact:
                 tabLayout.setVisibility(View.GONE);
-                fragmentTransaction.replace(R.id.flContent, ContactFragment.newInstance("test", "test")).addToBackStack(null).commit();
+                fragmentTransaction.replace(R.id.flContent, ContactFragment.newInstance(uid, "test")).addToBackStack(null).commit();
                 break;
             case R.id.action_summary:
                 showAdminDialog();

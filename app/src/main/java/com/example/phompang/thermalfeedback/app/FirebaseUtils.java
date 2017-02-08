@@ -1,5 +1,6 @@
 package com.example.phompang.thermalfeedback.app;
 
+import com.example.phompang.thermalfeedback.model.Contact;
 import com.example.phompang.thermalfeedback.model.Notification;
 import com.example.phompang.thermalfeedback.model.User;
 import com.google.firebase.database.DataSnapshot;
@@ -83,5 +84,10 @@ public class FirebaseUtils {
 
             }
         });
+    }
+
+    public static void addContact(String uid, Contact contact) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        reference.child(uid).child("contacts").push().setValue(contact);
     }
 }

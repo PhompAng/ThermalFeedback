@@ -15,8 +15,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.phompang.thermalfeedback.adapter.ContactAdapter;
+import com.example.phompang.thermalfeedback.app.FirebaseUtils;
 import com.example.phompang.thermalfeedback.model.Contact;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +41,11 @@ import butterknife.Unbinder;
 public class ContactFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM1 = "uid";
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String uid;
     private String mParam2;
 
 
@@ -50,15 +57,15 @@ public class ContactFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
+     * @param uid Parameter 1.
      * @param param2 Parameter 2.
      * @return A new instance of fragment ContactFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ContactFragment newInstance(String param1, String param2) {
+    public static ContactFragment newInstance(String uid, String param2) {
         ContactFragment fragment = new ContactFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM1, uid);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
@@ -68,7 +75,7 @@ public class ContactFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            uid = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         setHasOptionsMenu(true);
@@ -77,6 +84,7 @@ public class ContactFragment extends Fragment {
     private Unbinder unbinder;
     private List<Contact> contacts;
     private ContactAdapter adapter;
+    private DatabaseReference reference;
     @BindView(R.id.list)
     RecyclerView recyclerView;
 
@@ -87,11 +95,15 @@ public class ContactFragment extends Fragment {
         unbinder = ButterKnife.bind(this, v);
         ((ExperimentActivity) getActivity()).showFab();
 
-        makeList();
+        contacts = new ArrayList<>();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         adapter = new ContactAdapter(getContext(), contacts);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+
+        reference = FirebaseDatabase.getInstance().getReference();
+
+        retrieveContacts();
 
         FloatingActionButton addContact = (FloatingActionButton) getActivity().findViewById(R.id.add_contact);
         addContact.setOnClickListener(new View.OnClickListener() {
@@ -110,16 +122,28 @@ public class ContactFragment extends Fragment {
         return v;
     }
 
-    private void makeList() {
-        contacts = new ArrayList<>();
-        Contact c1 = new Contact();
-        c1.setName("John Doe");
-        c1.setPhone("081-2345-678");
-        Contact c2 = new Contact();
-        c2.setName("AAA AAA");
-        c2.setPhone("080-1234-567");
-        contacts.add(c1);
-        contacts.add(c2);
+    private Query contactRef;
+    private ValueEventListener listener;
+
+    private void retrieveContacts() {
+        contactRef = reference.child(uid).child("contacts");
+        listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                contacts.clear();
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    Contact contact = snapshot.getValue(Contact.class);
+                    contacts.add(contact);
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        contactRef.addValueEventListener(listener);
     }
 
     private void showAddDialog() {
@@ -137,8 +161,8 @@ public class ContactFragment extends Fragment {
                         Contact contact = new Contact();
                         contact.setName(name);
                         contact.setPhone(phone);
-                        contacts.add(contact);
-                        adapter.notifyItemInserted(contacts.size());
+                        FirebaseUtils.addContact(uid, contact);
+                        Toast.makeText(getContext(), "Add Contact successful", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
                 })
@@ -164,6 +188,7 @@ public class ContactFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+        contactRef.removeEventListener(listener);
         ((ExperimentActivity) getActivity()).hideFab();
     }
 }

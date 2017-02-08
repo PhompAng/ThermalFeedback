@@ -19,7 +19,7 @@
             android:id="@+id/phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
+            android:inputType="text"
             android:hint="Phone Number"/>
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>
