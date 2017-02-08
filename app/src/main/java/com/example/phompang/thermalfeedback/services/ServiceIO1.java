@@ -56,7 +56,7 @@ public class ServiceIO1 extends IOIOService {
 
         mNotificationReceiver = new NotificationReceiver(manager);
         mSmsReceiver = new SMSReceiver(manager);
-        mPhoneListener = new PhoneListener(manager);
+        mPhoneListener = new PhoneListener(manager, uid);
 
         TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
         telephonyManager.listen(mPhoneListener, PhoneStateListener.LISTEN_CALL_STATE);
