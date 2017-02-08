@@ -88,6 +88,6 @@ public class FirebaseUtils {
 
     public static void addContact(String uid, Contact contact) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        reference.child(uid).child("contacts").push().setValue(contact);
+        reference.child("users").child(uid).child("contacts").push().setValue(contact);
     }
 }
