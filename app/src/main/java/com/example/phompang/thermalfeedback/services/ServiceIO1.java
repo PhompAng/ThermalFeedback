@@ -140,44 +140,51 @@ public class ServiceIO1 extends IOIOService {
                 int feedbackPerieod = 15;
 
                 Log.d("thermal", manager.getThermal_warning() + "");
-                switch (manager.getThermal_warning()) {
-                    case 1: //very hot
-                        Log.d("Warning", "Call from close friends - very hot thermal stumuli");
-                        dStby.write(true);
-                        dOutA.write(true);
-                        dOutB.write(false);
-                        //pTemp.setPulseWidth(multi_veryhot * (neutral_temp + intensity_very));
-                        pTemp.setPulseWidth(2580);
-                        break;
-                    case 2: //hot
-                        Log.d("Warning", "Call from s/o else - hot thermal stumuli");
-                        dStby.write(true);
-                        dOutA.write(true);
-                        dOutB.write(false);
-                        //pTemp.setPulseWidth(multi_hot * (neutral_temp + intensity_regular));
-                        pTemp.setPulseWidth(2000);
-                        break;
-                    case 3: // cold
-                        Log.d("Warning", "App notification from fb app - cold thermal stimuli");
-                        dStby.write(true);
-                        dOutA.write(false);
-                        dOutB.write(true);
-                        pTemp.setPulseWidth(muti_cool * (neutral_temp - intensity_regular));
-                        break;
-                    case 4: //very cold
-                        Log.d("Warning", "Personal Messaging from SMS or FB Line apps - very cold thermal stumuli");
-                        dStby.write(true);
-                        dOutA.write(false);
-                        dOutB.write(true);
-                        pTemp.setPulseWidth(muti_verycool * (neutral_temp - intensity_very));
-                        break;
-                    default:
-                        Log.d("Warning", "set peltier to neutral temperature/not send any electricity to peltier.");
-                        dStby.write(false);
-                        dOutA.write(false);
-                        dOutB.write(false);
-                        pTemp.setPulseWidth(0);
-                        break;
+                if (day == 1 || day == 3) {
+                    switch (manager.getThermal_warning()) {
+                        case 1: //very hot
+                            Log.d("Warning", "Call from close friends - very hot thermal stumuli");
+                            dStby.write(true);
+                            dOutA.write(true);
+                            dOutB.write(false);
+                            //pTemp.setPulseWidth(multi_veryhot * (neutral_temp + intensity_very));
+                            pTemp.setPulseWidth(2580);
+                            break;
+                        case 2: //hot
+                            Log.d("Warning", "Call from s/o else - hot thermal stumuli");
+                            dStby.write(true);
+                            dOutA.write(true);
+                            dOutB.write(false);
+                            //pTemp.setPulseWidth(multi_hot * (neutral_temp + intensity_regular));
+                            pTemp.setPulseWidth(2000);
+                            break;
+                        case 3: // cold
+                            Log.d("Warning", "App notification from fb app - cold thermal stimuli");
+                            dStby.write(true);
+                            dOutA.write(false);
+                            dOutB.write(true);
+                            pTemp.setPulseWidth(muti_cool * (neutral_temp - intensity_regular));
+                            break;
+                        case 4: //very cold
+                            Log.d("Warning", "Personal Messaging from SMS or FB Line apps - very cold thermal stumuli");
+                            dStby.write(true);
+                            dOutA.write(false);
+                            dOutB.write(true);
+                            pTemp.setPulseWidth(muti_verycool * (neutral_temp - intensity_very));
+                            break;
+                        default:
+                            Log.d("Warning", "set peltier to neutral temperature/not send any electricity to peltier.");
+                            dStby.write(false);
+                            dOutA.write(false);
+                            dOutB.write(false);
+                            pTemp.setPulseWidth(0);
+                            break;
+                    }
+                }
+
+                if (day >= 2 && manager.getDelay_warning() == 0 && manager.getThermal_warning() != 0) {
+                    v.vibrate(300);
+                    Log.d("vibrate", "vibrate");
                 }
 
                 Log.d("Warning", "Delay = " + manager.getDelay_warning());

@@ -100,8 +100,8 @@ public class PhoneListener extends PhoneStateListener {
         notification.setIsReal(true);
         notification.setType("Incoming Call");
         notification.setStimuli(stimuli);
-        notification.setIsThermal(true);
-        notification.setIsVibrate(false);
+        notification.setIsThermal(mReceiverManager.getDay() == 1 || mReceiverManager.getDay() == 3);
+        notification.setIsVibrate(mReceiverManager.getDay() >= 2);
         notification.setStartTime(startTime);
         mReceiverManager.pushNotification(notification);
     }
