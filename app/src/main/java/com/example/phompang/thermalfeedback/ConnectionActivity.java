@@ -17,6 +17,10 @@ import android.widget.Toast;
 import com.example.phompang.thermalfeedback.services.Receiver.ReceiverManager;
 import com.example.phompang.thermalfeedback.services.ServiceIO1;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.Locale;
 import java.util.Set;
 
@@ -69,7 +73,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
 
-        showDevices();
+//        showDevices();
     }
 
     private void showDevices() {
@@ -141,15 +145,22 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         }.start();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onMessageEvent(String state) {
+        status.setText(state);
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
         startService(new Intent(getApplicationContext(), ServiceIO1.class));
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        EventBus.getDefault().unregister(this);
         if (timer != null) {
             timer.cancel();
         }

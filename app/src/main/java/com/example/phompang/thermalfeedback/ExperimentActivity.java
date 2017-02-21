@@ -25,6 +25,10 @@ import com.example.phompang.thermalfeedback.services.Receiver.ReceiverManager;
 import com.example.phompang.thermalfeedback.services.ServiceIO1;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 public class ExperimentActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         OnFragmentInteractionListener, SummaryFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, TabLayout.OnTabSelectedListener {
@@ -85,10 +89,13 @@ public class ExperimentActivity extends AppCompatActivity
         }
     }
 
+    private MenuItem bluetoothMenu;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.experiment, menu);
+        bluetoothMenu = menu.findItem(R.id.action_bluetooth);
         return true;
     }
 
@@ -155,6 +162,27 @@ public class ExperimentActivity extends AppCompatActivity
         super.onRestoreInstanceState(savedInstanceState);
         uid = savedInstanceState.getString("uid");
         day = savedInstanceState.getInt("day");
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onMessageEvent(String state) {
+        if (state.equals("CONNECTED")) {
+            bluetoothMenu.setIcon(R.drawable.ic_bluetooth_white_24dp);
+        } else {
+            bluetoothMenu.setIcon(R.drawable.ic_bluetooth_disabled_white_24dp);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

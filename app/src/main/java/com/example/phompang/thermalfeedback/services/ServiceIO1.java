@@ -16,6 +16,8 @@ import com.example.phompang.thermalfeedback.services.Receiver.PhoneListener;
 import com.example.phompang.thermalfeedback.services.Receiver.ReceiverManager;
 import com.example.phompang.thermalfeedback.services.Receiver.SMSReceiver;
 
+import org.greenrobot.eventbus.EventBus;
+
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
 import ioio.lib.api.PwmOutput;
@@ -42,7 +44,6 @@ public class ServiceIO1 extends IOIOService {
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
-
         Log.d("serviceIO1", "start");
 
         manager = ReceiverManager.getInstance();
@@ -74,7 +75,6 @@ public class ServiceIO1 extends IOIOService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         Log.d("serviceIO1", "destroy");
         if (uid != null) {
             this.unregisterReceiver(mSmsReceiver);
@@ -126,9 +126,14 @@ public class ServiceIO1 extends IOIOService {
             pTemp = ioio_.openPwmOutput(pTempPin, mPWMFreq);
         }
 
+        public void disconnected() {
+            EventBus.getDefault().postSticky("DISCONNECTED");
+        }
+
         public void loop() throws ConnectionLostException {
             try {
                 Log.d("state", ioio_.getState().name());
+                EventBus.getDefault().postSticky(ioio_.getState().name());
                 Log.d("pause", manager.isPause() + "");
                 if (manager.isPause()) {
                     manager.setThermal_warning(0);

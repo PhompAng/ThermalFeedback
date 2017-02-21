@@ -12,7 +12,7 @@
         android:title="Stop"
         app:showAsAction="always" />
     <item
-        android:icon="@drawable/ic_bluetooth_white_24dp"
+        android:icon="@drawable/ic_bluetooth_disabled_white_24dp"
         android:id="@+id/action_bluetooth"
         android:title="Bluetooth"
         app:showAsAction="always" />
