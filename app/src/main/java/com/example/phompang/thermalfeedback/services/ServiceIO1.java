@@ -52,21 +52,21 @@ public class ServiceIO1 extends IOIOService {
             day = intent.getIntExtra("day", 1);
             manager.setUid(uid);
             manager.setDay(day);
+
+            mNotificationReceiver = new NotificationReceiver(manager);
+            mSmsReceiver = new SMSReceiver(manager);
+            mPhoneListener = new PhoneListener(manager, uid);
+
+            TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+            telephonyManager.listen(mPhoneListener, PhoneStateListener.LISTEN_CALL_STATE);
+
+            IntentFilter smsFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+            this.registerReceiver(mSmsReceiver, smsFilter);
+
+            IntentFilter notificationFilter = new IntentFilter();
+            notificationFilter.addAction(NLService.NOTIFICATION_INTENT);
+            this.registerReceiver(mNotificationReceiver, notificationFilter);
         }
-
-        mNotificationReceiver = new NotificationReceiver(manager);
-        mSmsReceiver = new SMSReceiver(manager);
-        mPhoneListener = new PhoneListener(manager, uid);
-
-        TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
-        telephonyManager.listen(mPhoneListener, PhoneStateListener.LISTEN_CALL_STATE);
-
-        IntentFilter smsFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
-        this.registerReceiver(mSmsReceiver, smsFilter);
-
-        IntentFilter notificationFilter = new IntentFilter();
-        notificationFilter.addAction(NLService.NOTIFICATION_INTENT);
-        this.registerReceiver(mNotificationReceiver, notificationFilter);
 
         v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
     }
@@ -76,8 +76,10 @@ public class ServiceIO1 extends IOIOService {
         super.onDestroy();
 
         Log.d("serviceIO1", "destroy");
-        this.unregisterReceiver(mSmsReceiver);
-        this.unregisterReceiver(mNotificationReceiver);
+        if (uid != null) {
+            this.unregisterReceiver(mSmsReceiver);
+            this.unregisterReceiver(mNotificationReceiver);
+        }
     }
 
     @Override
@@ -126,6 +128,7 @@ public class ServiceIO1 extends IOIOService {
 
         public void loop() throws ConnectionLostException {
             try {
+                Log.d("state", ioio_.getState().name());
                 Log.d("pause", manager.isPause() + "");
                 if (manager.isPause()) {
                     manager.setThermal_warning(0);
