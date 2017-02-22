@@ -1,12 +1,18 @@
 package com.example.phompang.thermalfeedback;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -43,6 +49,7 @@ public class ContactFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "uid";
     private static final String ARG_PARAM2 = "param2";
+    private static final int PICK_CONTACT = 3;
 
     // TODO: Rename and change types of parameters
     private String uid;
@@ -116,17 +123,22 @@ public class ContactFragment extends Fragment {
         importContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "import", Toast.LENGTH_SHORT).show();
+                pickContact();
             }
         });
         return v;
+    }
+
+    private void pickContact() {
+        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        startActivityForResult(intent, PICK_CONTACT);
     }
 
     private Query contactRef;
     private ValueEventListener listener;
 
     private void retrieveContacts() {
-        contactRef = reference.child(uid).child("contacts");
+        contactRef = reference.child("users").child(uid).child("contacts");
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -158,11 +170,7 @@ public class ContactFragment extends Fragment {
                         String phone = ((EditText) dialogView.findViewById(R.id.phone)).getText().toString();
                         //TODO Validate
 
-                        Contact contact = new Contact();
-                        contact.setName(name);
-                        contact.setPhone(phone);
-                        FirebaseUtils.addContact(uid, contact);
-                        Toast.makeText(getContext(), "Add Contact successful", Toast.LENGTH_SHORT).show();
+                        addContact(name, phone);
                         dialog.dismiss();
                     }
                 })
@@ -174,6 +182,54 @@ public class ContactFragment extends Fragment {
                 })
                 .create();
         builder.show();
+    }
+
+    private void addContact(String name, String phone) {
+        Contact contact = new Contact();
+        contact.setName(name);
+        contact.setPhone(phone);
+        FirebaseUtils.addContact(uid, contact);
+        Toast.makeText(getContext(), "Add Contact successful", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        switch (requestCode) {
+            case PICK_CONTACT:
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri data = intent.getData();
+                    Cursor cursor = getContext().getContentResolver().query(data, null, null, null, null);
+                    if (cursor != null) {
+                        cursor.moveToFirst();
+                        String id = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+                        String hasPhone = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+
+                        String number;
+                        if (hasPhone.equalsIgnoreCase("1")) {
+                            Cursor phones = getContext().getContentResolver().query(
+                                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
+                                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = "+ id,
+                                    null, null);
+                            if (phones != null) {
+                                phones.moveToFirst();
+                                number = phones.getString(phones.getColumnIndex("data1"));
+
+                                int nameColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+                                String name = cursor.getString(nameColumnIndex);
+
+                                addContact(name, number);
+                                Log.d("contact", "number : " + number +" , name : "+name);
+                                phones.close();
+                                cursor.close();
+                            }
+                        }
+                    }
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
