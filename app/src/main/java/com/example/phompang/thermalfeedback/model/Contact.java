@@ -5,6 +5,7 @@ package com.example.phompang.thermalfeedback.model;
  */
 
 public class Contact {
+    private String key;
     private String name;
     private String phone;
 
@@ -25,5 +26,13 @@ public class Contact {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

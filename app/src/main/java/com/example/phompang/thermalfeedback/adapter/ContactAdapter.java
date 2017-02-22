@@ -25,16 +25,18 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
     private Context context;
     private List<Contact> contacts;
+    private ViewHolder.OnContactDeleteListener listener;
 
-    public ContactAdapter(Context context, List<Contact> contacts) {
+    public ContactAdapter(Context context, List<Contact> contacts, ViewHolder.OnContactDeleteListener listener) {
         this.context = context;
         this.contacts = contacts;
+        this.listener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(context).inflate(R.layout.layout_contact, parent, false);
-        return new ViewHolder(v);
+        return new ViewHolder(v, listener);
     }
 
     @Override
@@ -54,7 +56,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         return contacts.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.img)
         CircularImageView img;
@@ -65,9 +67,24 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         @BindView(R.id.delete)
         ImageView delete;
 
-        ViewHolder(View itemView) {
+        OnContactDeleteListener listener;
+
+        ViewHolder(View itemView, OnContactDeleteListener listener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            this.listener = listener;
+            delete.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (listener != null) {
+                listener.onContactDelete(getAdapterPosition());
+            }
+        }
+
+        public interface OnContactDeleteListener {
+            void onContactDelete(int position);
         }
     }
 }

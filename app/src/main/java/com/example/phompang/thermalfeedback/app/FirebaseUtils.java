@@ -90,4 +90,9 @@ public class FirebaseUtils {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         reference.child("users").child(uid).child("contacts").push().setValue(contact);
     }
+
+    public static void deleteContact(String uid, Contact contact) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        reference.child("users").child(uid).child("contacts").child(contact.getKey()).removeValue();
+    }
 }

@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.phompang.thermalfeedback.adapter.ContactAdapter;
@@ -44,7 +46,7 @@ import butterknife.Unbinder;
  * Use the {@link ContactFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ContactFragment extends Fragment {
+public class ContactFragment extends Fragment implements ContactAdapter.ViewHolder.OnContactDeleteListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "uid";
@@ -92,6 +94,8 @@ public class ContactFragment extends Fragment {
     private List<Contact> contacts;
     private ContactAdapter adapter;
     private DatabaseReference reference;
+    @BindView(R.id.fragment_contact)
+    LinearLayout layout;
     @BindView(R.id.list)
     RecyclerView recyclerView;
 
@@ -104,7 +108,7 @@ public class ContactFragment extends Fragment {
 
         contacts = new ArrayList<>();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        adapter = new ContactAdapter(getContext(), contacts);
+        adapter = new ContactAdapter(getContext(), contacts, this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
@@ -145,6 +149,7 @@ public class ContactFragment extends Fragment {
                 contacts.clear();
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     Contact contact = snapshot.getValue(Contact.class);
+                    contact.setKey(snapshot.getKey());
                     contacts.add(contact);
                 }
                 adapter.notifyDataSetChanged();
@@ -246,5 +251,27 @@ public class ContactFragment extends Fragment {
         unbinder.unbind();
         contactRef.removeEventListener(listener);
         ((ExperimentActivity) getActivity()).hideFab();
+    }
+
+    @Override
+    public void onContactDelete(final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Delete Contact")
+                .setMessage("Do you wat to delete " + contacts.get(position).getName())
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FirebaseUtils.deleteContact(uid, contacts.get(position));
+                        Snackbar.make(layout, "Delete Successful", Snackbar.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
     }
 }
