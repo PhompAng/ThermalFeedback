@@ -24,6 +24,7 @@ import com.example.phompang.thermalfeedback.ExperimentFragment.OnFragmentInterac
 import com.example.phompang.thermalfeedback.services.Receiver.ReceiverManager;
 import com.example.phompang.thermalfeedback.services.ServiceIO1;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -176,12 +177,14 @@ public class ExperimentActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        FirebaseMessaging.getInstance().subscribeToTopic("fake_noti");
         EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("fake_noti");
         EventBus.getDefault().unregister(this);
     }
 
