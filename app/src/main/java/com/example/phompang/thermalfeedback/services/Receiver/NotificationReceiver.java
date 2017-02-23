@@ -34,6 +34,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         Boolean state = intent.getBooleanExtra("notification_state", true);
 
         Integer thermal_warning = -1;
+        boolean real = true;
 
         Log.d("tempPacket", tempPacket);
         switch (tempPacket) {
@@ -50,6 +51,10 @@ public class NotificationReceiver extends BroadcastReceiver {
             case "com.whatsapp":
                 thermal_warning = 4;
                 break;
+            case "com.example.phompang.thermalfeedback":
+                thermal_warning = Integer.parseInt(tickerText);
+                real = false;
+                break;
             default:
                 return;
         }
@@ -60,7 +65,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             String timeStart = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss", Locale.getDefault()).format(date);
             Log.d(TAG, "START " + tempPacket + ": " + tickerText + " " + timeStart);
             mReceiverManager.setDelay_warning(0);
-            pushNotification(tempPacket, thermal_warning, date.getTime());
+            pushNotification(tempPacket, thermal_warning, date.getTime(), real);
         } else if (!state && (tickerText != null)) {
             mReceiverManager.setThermal_warning(0);
             String timeStop = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss", Locale.getDefault()).format(date);
@@ -69,9 +74,9 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    private void pushNotification(String type, int stimuli, long startTime) {
+    private void pushNotification(String type, int stimuli, long startTime, boolean real) {
         Notification notification = new Notification();
-        notification.setIsReal(true);
+        notification.setIsReal(real);
         notification.setType(type);
         notification.setStimuli(stimuli);
         notification.setIsThermal(mReceiverManager.getDay() == 1 || mReceiverManager.getDay() == 3);
