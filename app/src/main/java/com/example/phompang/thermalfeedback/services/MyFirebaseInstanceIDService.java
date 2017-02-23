@@ -2,6 +2,7 @@ package com.example.phompang.thermalfeedback.services;
 
 import android.util.Log;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
@@ -14,5 +15,6 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     public void onTokenRefresh() {
         String token = FirebaseInstanceId.getInstance().getToken();
         Log.d("UpdateToken", token);
+        FirebaseDatabase.getInstance().getReference().child("token").setValue(token);
     }
 }
