@@ -29,6 +29,9 @@ public class PhoneListener extends PhoneStateListener {
     private ReceiverManager mReceiverManager;
     private List<Contact> contactList;
 
+    static boolean ring=false;
+    static boolean callReceived=false;
+
     public PhoneListener(ReceiverManager manager, String uid) {
         this.mReceiverManager = manager;
         contactList = new ArrayList<>();
@@ -59,6 +62,7 @@ public class PhoneListener extends PhoneStateListener {
 
         switch (state) {
             case TelephonyManager.CALL_STATE_RINGING:
+                ring = true;
                 int thermal_warning = memberState ? 1:2;
                 mReceiverManager.setThermal_warning(thermal_warning);
                 String timeStart = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss", Locale.getDefault()).format(date);
@@ -67,17 +71,22 @@ public class PhoneListener extends PhoneStateListener {
                 pushNotification(incomingNumber, memberState, thermal_warning, date.getTime());
                 break;
             case TelephonyManager.CALL_STATE_OFFHOOK:
+                callReceived = true;
                 mReceiverManager.setThermal_warning(0);
                 String timeOffHook = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss", Locale.getDefault()).format(date);
                 Log.d(TAG, incomingNumber + ": " + state + "/" + memberState + " " + timeOffHook);
                 responseNotification(date.getTime());
                 break;
             case TelephonyManager.CALL_STATE_IDLE:
-                //cannot detect miss call
-                mReceiverManager.setThermal_warning(0);
                 String timeIdle = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss", Locale.getDefault()).format(date);
                 Log.d(TAG, incomingNumber + ": " + state + "/" + memberState + " " + timeIdle);
                 endCallNotification(date.getTime());
+                if (ring&&!callReceived) { // miss call
+                    ring = false;
+                    callReceived = false;
+                    break;
+                }
+                mReceiverManager.setThermal_warning(0);
                 break;
             default:
                 break;

@@ -196,10 +196,12 @@ public class ServiceIO1 extends IOIOService {
                 }
 
                 Log.d("Warning", "Delay = " + manager.getDelay_warning());
-                if (manager.getDelay_warning() != feedbackPerieod) {
+                Log.d("Hold", "hold = " + manager.isHold());
+                if (manager.isHold() || manager.getDelay_warning() <= feedbackPerieod) {
                     manager.setDelay_warning(manager.getDelay_warning()+1);
                 } else {
                     manager.setThermal_warning(0);
+                    manager.setDelay_warning(0);
                     dOutA.write(false);
                     dOutB.write(false);
                 }
