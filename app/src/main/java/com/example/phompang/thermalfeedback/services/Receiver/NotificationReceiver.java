@@ -52,7 +52,11 @@ public class NotificationReceiver extends BroadcastReceiver {
                 thermal_warning = 4;
                 break;
             case "com.example.phompang.thermalfeedback":
-                thermal_warning = Integer.parseInt(tickerText);
+                try {
+                    thermal_warning = Integer.parseInt(tickerText);
+                } catch (NumberFormatException e) {
+                    return;
+                }
                 real = false;
                 break;
             default:
