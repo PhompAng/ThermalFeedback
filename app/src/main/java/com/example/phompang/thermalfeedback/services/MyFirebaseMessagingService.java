@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.devahoy.android.shared.Shared;
 import com.example.phompang.thermalfeedback.MainActivity;
 import com.example.phompang.thermalfeedback.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -27,8 +28,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
         }
 
+        Shared shared = new Shared(this, "route");
+        boolean getNoti = shared.getBoolean("getNoti", false);
+        Log.d(TAG, getNoti + "");
         // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
+        if (remoteMessage.getNotification() != null && getNoti) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
             sendNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
         }

@@ -20,11 +20,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import com.devahoy.android.shared.Shared;
 import com.example.phompang.thermalfeedback.ExperimentFragment.OnFragmentInteractionListener;
 import com.example.phompang.thermalfeedback.services.Receiver.ReceiverManager;
 import com.example.phompang.thermalfeedback.services.ServiceIO1;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -40,6 +40,8 @@ public class ExperimentActivity extends AppCompatActivity
     private FloatingActionsMenu floatingActionsMenu;
     private String uid;
     private int day;
+
+    private Shared shared;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,14 +179,15 @@ public class ExperimentActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseMessaging.getInstance().subscribeToTopic("fake_noti");
+        shared = new Shared(this, "route");
+        shared.save("getNoti", true);
         EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        FirebaseMessaging.getInstance().unsubscribeFromTopic("fake_noti");
+        shared.save("getNoti", false);
         EventBus.getDefault().unregister(this);
     }
 
