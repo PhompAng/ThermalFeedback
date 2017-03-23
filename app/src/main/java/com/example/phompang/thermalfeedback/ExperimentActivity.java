@@ -19,12 +19,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.devahoy.android.shared.Shared;
 import com.example.phompang.thermalfeedback.ExperimentFragment.OnFragmentInteractionListener;
 import com.example.phompang.thermalfeedback.services.Receiver.ReceiverManager;
 import com.example.phompang.thermalfeedback.services.ServiceIO1;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,6 +47,8 @@ public class ExperimentActivity extends AppCompatActivity
     private String uid;
     private int day;
 
+    private DatabaseReference databaseReference;
+
     private Shared shared;
 
     @Override
@@ -49,6 +57,8 @@ public class ExperimentActivity extends AppCompatActivity
         setContentView(R.layout.activity_experiment);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        databaseReference = FirebaseDatabase.getInstance().getReference();
 
         if (getIntent() != null) {
             uid = getIntent().getStringExtra("uid");
@@ -134,13 +144,28 @@ public class ExperimentActivity extends AppCompatActivity
                 .setView(dialogView)
                 .setPositiveButton("Log in", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String username = ((EditText) dialogView.findViewById(R.id.username)).getText().toString();
-                        String password = ((EditText) dialogView.findViewById(R.id.password)).getText().toString();
-                        //TODO Validate
-                        stopService(new Intent(getApplicationContext(), ServiceIO1.class));
-                        dialog.dismiss();
-                        getSupportFragmentManager().beginTransaction().replace(R.id.flContent, SummaryFragment.newInstance(uid, 0), "summary").commit();
+                    public void onClick(final DialogInterface dialog, int which) {
+                        final String username = ((EditText) dialogView.findViewById(R.id.username)).getText().toString();
+                        final String password = ((EditText) dialogView.findViewById(R.id.password)).getText().toString();
+                        databaseReference.child("admin").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                String adminUser = dataSnapshot.child("username").getValue(String.class);
+                                String adminPass = dataSnapshot.child("password").getValue(String.class);
+                                if (adminUser.equals(username) && adminPass.equals(password)) {
+                                    stopService(new Intent(getApplicationContext(), ServiceIO1.class));
+                                    dialog.dismiss();
+                                    getSupportFragmentManager().beginTransaction().replace(R.id.flContent, SummaryFragment.newInstance(uid, 0), "summary").commit();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Wrong credential!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -224,7 +249,6 @@ public class ExperimentActivity extends AppCompatActivity
                 startActivity(new Intent(ExperimentActivity.this, AdminActivity.class));
                 break;
             case R.id.action_logout:
-                //TODO logout
                 stopService(new Intent(getApplicationContext(), ServiceIO1.class));
                 finish();
                 break;
