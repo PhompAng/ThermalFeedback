@@ -1,15 +1,26 @@
 package com.example.phompang.thermalfeedback;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,12 +29,16 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+
+        requestPermissions();
 
         FirebaseMessaging.getInstance().subscribeToTopic("fake_noti");
 
@@ -32,6 +47,51 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, mainFragment).commit();
 
+    }
+
+    private void requestPermissions() {
+        List<String> permissionsNeeded = new ArrayList<>();
+        if (!gotPermission(Manifest.permission.READ_CONTACTS)) {
+            permissionsNeeded.add(Manifest.permission.READ_CONTACTS);
+        }
+        if (!gotPermission(Manifest.permission.READ_PHONE_STATE)) {
+            permissionsNeeded.add(Manifest.permission.READ_PHONE_STATE);
+        }
+        if (!gotPermission(Manifest.permission.RECEIVE_SMS)) {
+            permissionsNeeded.add(Manifest.permission.RECEIVE_SMS);
+        }
+        if (!gotPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+
+        if (permissionsNeeded.size() > 0) {
+            ActivityCompat.requestPermissions(this, permissionsNeeded.toArray(new String[permissionsNeeded.size()]), REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+        }
+    }
+
+    private boolean gotPermission(String permission) {
+        return ContextCompat.checkSelfPermission(getApplicationContext(), permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS:
+                Map<String, Integer> perms = new HashMap<>();
+                for (int i = 0; i < permissions.length; i++) {
+                    perms.put(permissions[i], grantResults[i]);
+                }
+
+                for (Map.Entry<String, Integer> perm: perms.entrySet()) {
+                    if (perm.getValue() != PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(this, perm.getKey() + " is not granted.", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override
