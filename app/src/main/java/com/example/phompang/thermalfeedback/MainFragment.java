@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -23,8 +25,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import me.srodrigo.androidhintspinner.HintAdapter;
-import me.srodrigo.androidhintspinner.HintSpinner;
 
 
 /**
@@ -88,7 +88,6 @@ public class MainFragment extends Fragment {
     @BindView(R.id.start_btn)
     Button start;
     private List<String> users;
-    private HintSpinner<String> hintSpinner;
     private Unbinder unbinder;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -108,21 +107,25 @@ public class MainFragment extends Fragment {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     users.add(snapshot.getKey());
                 }
-                hintSpinner = new HintSpinner<>(
-                        user,
-                        new HintAdapter<>(getContext(), "User", users),
-                        new HintSpinner.Callback<String>() {
-                            @Override
-                            public void onItemSelected(int position, String itemAtPosition) {
-                                start.setEnabled(true);
-                                uid = itemAtPosition;
-                            }
-                        });
-                hintSpinner.init();
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, users);
+                user.setAdapter(adapter);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        user.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                start.setEnabled(true);
+                uid = users.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
