@@ -77,7 +77,7 @@ public class ServiceIO1 extends IOIOService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        super.onStartCommand(intent, flags, startId)
+        super.onStartCommand(intent, flags, startId);
 
         PowerManager mgr = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
