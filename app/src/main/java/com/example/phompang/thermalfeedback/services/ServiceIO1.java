@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.telephony.PhoneStateListener;
@@ -36,6 +37,8 @@ public class ServiceIO1 extends IOIOService {
     private SMSReceiver mSmsReceiver;
     private PhoneListener mPhoneListener;
     private ReceiverManager manager;
+
+    private PowerManager.WakeLock mWakeLock;
     Vibrator v;
 
     private String uid;
@@ -73,9 +76,30 @@ public class ServiceIO1 extends IOIOService {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId)
+
+        PowerManager mgr = (PowerManager) getSystemService(Context.POWER_SERVICE);
+
+        if (this.mWakeLock == null) {
+            this.mWakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+        }
+
+        if (this.mWakeLock.isHeld()) {
+            this.mWakeLock.acquire();
+        }
+
+        return START_STICKY;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d("serviceIO1", "destroy");
+        if (this.mWakeLock != null) {
+            this.mWakeLock.release();
+            this.mWakeLock = null;
+        }
         if (uid != null) {
             this.unregisterReceiver(mSmsReceiver);
             this.unregisterReceiver(mNotificationReceiver);
