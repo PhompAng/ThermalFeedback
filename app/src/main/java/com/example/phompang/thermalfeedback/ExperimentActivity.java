@@ -60,9 +60,13 @@ public class ExperimentActivity extends AppCompatActivity
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
+        shared = new Shared(this, "thermal");
+
         if (getIntent() != null) {
             uid = getIntent().getStringExtra("uid");
             day = getIntent().getIntExtra("day", 1);
+            shared.save("user_id", uid);
+            shared.save("day", day);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -153,6 +157,7 @@ public class ExperimentActivity extends AppCompatActivity
                                 String adminUser = dataSnapshot.child("username").getValue(String.class);
                                 String adminPass = dataSnapshot.child("password").getValue(String.class);
                                 if (adminUser.equals(username) && adminPass.equals(password)) {
+                                    logout();
                                     stopService(new Intent(getApplicationContext(), ServiceIO1.class));
                                     dialog.dismiss();
                                     getSupportFragmentManager().beginTransaction().replace(R.id.flContent, SummaryFragment.newInstance(uid, 0), "summary").commit();
@@ -204,8 +209,8 @@ public class ExperimentActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        shared = new Shared(this, "route");
         shared.save("getNoti", true);
+        shared.save("using", true);
         EventBus.getDefault().register(this);
     }
 
@@ -249,6 +254,7 @@ public class ExperimentActivity extends AppCompatActivity
                 startActivity(new Intent(ExperimentActivity.this, AdminActivity.class));
                 break;
             case R.id.action_logout:
+                logout();
                 stopService(new Intent(getApplicationContext(), ServiceIO1.class));
                 finish();
                 break;
@@ -257,6 +263,12 @@ public class ExperimentActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void logout() {
+        shared.save("using", false);
+        shared.remove("user_id");
+        shared.remove("day");
     }
 
     public void showTab() {

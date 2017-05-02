@@ -96,7 +96,7 @@ public class ServiceIO1 extends IOIOService {
     public void onDestroy() {
         super.onDestroy();
         Log.d("serviceIO1", "destroy");
-        if (this.mWakeLock != null) {
+        if (this.mWakeLock != null && mWakeLock.isHeld()) {
             this.mWakeLock.release();
             this.mWakeLock = null;
         }

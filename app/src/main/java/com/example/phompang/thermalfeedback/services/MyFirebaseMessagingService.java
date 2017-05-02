@@ -28,7 +28,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
         }
 
-        Shared shared = new Shared(this, "route");
+        Shared shared = new Shared(this, "thermal");
         boolean getNoti = shared.getBoolean("getNoti", false);
         Log.d(TAG, getNoti + "");
         // Check if message contains a notification payload.

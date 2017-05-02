@@ -10,11 +10,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.devahoy.android.shared.Shared;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
@@ -29,6 +31,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
+    private Shared shared;
+
+    public static final String TAG = MainActivity.class.getSimpleName();
+
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
     @Override
@@ -39,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
         setSupportActionBar(toolbar);
 
         requestPermissions();
+
+        shared = new Shared(this, "thermal");
 
         FirebaseMessaging.getInstance().subscribeToTopic("fake_noti");
 
@@ -71,6 +79,19 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
 
     private boolean gotPermission(String permission) {
         return ContextCompat.checkSelfPermission(getApplicationContext(), permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        boolean using = shared.getBoolean("using", false);
+        Log.d(TAG, using + "");
+        if (using) {
+            String uid = shared.getString("user_id", "U01");
+            int day = shared.getInt("day", 1);
+            Log.d(TAG, uid + " uid");
+            onFragmentInteraction(uid, day);
+        }
     }
 
     @Override
