@@ -32,7 +32,6 @@ import ioio.lib.util.android.IOIOService;
  */
 
 public class ServiceIO1 extends IOIOService {
-
     private NotificationReceiver mNotificationReceiver;
     private SMSReceiver mSmsReceiver;
     private PhoneListener mPhoneListener;
@@ -45,13 +44,14 @@ public class ServiceIO1 extends IOIOService {
     private int day;
 
     @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
+
         Log.d("serviceIO1", "start");
 
         manager = ReceiverManager.getInstance();
 
-        if (intent.getStringExtra("uid") != null) {
+        if (intent.hasExtra("uid")) {
             uid = intent.getStringExtra("uid");
             day = intent.getIntExtra("day", 1);
             manager.setUid(uid);
@@ -73,11 +73,6 @@ public class ServiceIO1 extends IOIOService {
         }
 
         v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        super.onStartCommand(intent, flags, startId);
 
         PowerManager mgr = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
