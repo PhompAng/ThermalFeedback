@@ -88,11 +88,6 @@ public class ExperimentActivity extends AppCompatActivity
 
         tabLayout.addOnTabSelectedListener(this);
 
-        Intent intent = new Intent(getApplicationContext(), ServiceIO1.class);
-        intent.putExtra("uid", uid);
-        intent.putExtra("day", day);
-        startService(intent);
-
         getSupportFragmentManager().beginTransaction().replace(R.id.flContent, ExperimentFragment.newInstance(uid, 0, day), "exp").commit();
     }
 
@@ -117,6 +112,14 @@ public class ExperimentActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -136,7 +139,6 @@ public class ExperimentActivity extends AppCompatActivity
                 showAdminDialog();
                 return true;
         }
-
 
         return super.onOptionsItemSelected(item);
     }
@@ -158,7 +160,6 @@ public class ExperimentActivity extends AppCompatActivity
                                 String adminPass = dataSnapshot.child("password").getValue(String.class);
                                 if (adminUser.equals(username) && adminPass.equals(password)) {
                                     logout();
-                                    stopService(new Intent(getApplicationContext(), ServiceIO1.class));
                                     dialog.dismiss();
                                     getSupportFragmentManager().beginTransaction().replace(R.id.flContent, SummaryFragment.newInstance(uid, 0), "summary").commit();
                                 } else {
@@ -211,7 +212,6 @@ public class ExperimentActivity extends AppCompatActivity
         super.onStart();
         shared.save("getNoti", true);
         shared.save("using", true);
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -225,7 +225,7 @@ public class ExperimentActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
-        stopService(new Intent(getApplicationContext(), ServiceIO1.class));
+//        stopService(new Intent(getApplicationContext(), ServiceIO1.class));
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -249,13 +249,14 @@ public class ExperimentActivity extends AppCompatActivity
                 break;
             case R.id.action_connect:
                 startActivity(new Intent(ExperimentActivity.this, ConnectionActivity.class));
+                stopService();
                 break;
             case R.id.action_calibrate:
                 startActivity(new Intent(ExperimentActivity.this, AdminActivity.class));
+                stopService();
                 break;
             case R.id.action_logout:
                 logout();
-                stopService(new Intent(getApplicationContext(), ServiceIO1.class));
                 finish();
                 break;
         }
@@ -269,6 +270,11 @@ public class ExperimentActivity extends AppCompatActivity
         shared.save("using", false);
         shared.remove("user_id");
         shared.remove("day");
+        stopService();
+    }
+
+    private void stopService() {
+        stopService(new Intent(getApplicationContext(), ServiceIO1.class));
     }
 
     public void showTab() {
