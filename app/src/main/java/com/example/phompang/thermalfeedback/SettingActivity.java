@@ -70,7 +70,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         final String testText = ((TextView) v).getText().toString();
         int thermalWarning = Integer.parseInt(v.getTag().toString());
         //TODO cancel testing
-        Snackbar.make(findViewById(R.id.activity_connection), String.format(Locale.getDefault(), "Testing stimuli: %s", testText), Snackbar.LENGTH_LONG).show();
+        Snackbar.make(findViewById(R.id.activity_setting), String.format(Locale.getDefault(), "Testing stimuli: %s", testText), Snackbar.LENGTH_LONG).show();
         mReceiverManager.setThermal_warning(thermalWarning);
         mReceiverManager.setDelay_warning(0);
         if (timer != null) {
