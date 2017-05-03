@@ -158,12 +158,19 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("com", "pause");
+        stopService(new Intent(getApplicationContext(), ServiceIO1.class));
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
         if (timer != null) {
             timer.cancel();
         }
-        stopService(new Intent(getApplicationContext(), ServiceIO1.class));
+        Log.d("con", "stop");
     }
 }

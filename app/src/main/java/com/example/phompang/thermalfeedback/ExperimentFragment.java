@@ -1,8 +1,11 @@
 package com.example.phompang.thermalfeedback;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +16,7 @@ import android.view.ViewGroup;
 
 import com.example.phompang.thermalfeedback.adapter.NotificationAdapter;
 import com.example.phompang.thermalfeedback.model.Notification;
+import com.example.phompang.thermalfeedback.services.ServiceIO1;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -133,9 +137,9 @@ public class ExperimentFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 notifications.clear();
-                for (DataSnapshot noif: dataSnapshot.getChildren()) {
+                for (DataSnapshot noti: dataSnapshot.getChildren()) {
                     try {
-                        Notification notification = noif.getValue(Notification.class);
+                        Notification notification = noti.getValue(Notification.class);
                         switch (notiType) {
                             case 1:
                                 if (notification.getIsReal()) {
@@ -193,23 +197,43 @@ public class ExperimentFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-//        reference.child("notifications").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-//                    try {
-//                        Map<String, Notification> value = (Map<String, Notification>) snapshot.getValue();
-//                    } catch (Exception e) {
-//                        snapshot.getRef().removeValue();
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
+    }
+
+    private CountDownTimer timer;
+    private ProgressDialog progressDialog;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showProgressDialog();
+        timer = new CountDownTimer(3000, 1000) {
+            public void onTick(long millisUntilFinished) {
+            }
+
+            public void onFinish() {
+                Intent intent = new Intent(getActivity(), ServiceIO1.class);
+                intent.putExtra("uid", uid);
+                intent.putExtra("day", day);
+                Log.d("expFrag", "resume");
+                getActivity().startService(intent);
+                hideProgressDialog();
+            }
+        }.start();
+    }
+
+    private void showProgressDialog() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(getContext());
+            progressDialog.setMessage("Loading User Data");
+            progressDialog.setIndeterminate(true);
+        }
+        progressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     @Override
