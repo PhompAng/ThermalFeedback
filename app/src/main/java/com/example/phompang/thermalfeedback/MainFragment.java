@@ -107,8 +107,10 @@ public class MainFragment extends Fragment {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     users.add(snapshot.getKey());
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, users);
-                user.setAdapter(adapter);
+                if (getActivity() != null) {
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, users);
+                    user.setAdapter(adapter);
+                }
             }
 
             @Override
