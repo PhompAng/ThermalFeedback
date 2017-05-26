@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
         if (using) {
             String uid = shared.getString("user_id", "U01");
             int day = shared.getInt("day", 1);
-            Log.d(TAG, uid + " uid");
+            Log.d(TAG, uid + " uid" + day);
             onFragmentInteraction(uid, day);
         }
     }

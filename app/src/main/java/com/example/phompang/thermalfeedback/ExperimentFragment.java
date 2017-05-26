@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.phompang.thermalfeedback.adapter.NotificationAdapter;
+import com.example.phompang.thermalfeedback.app.ServiceUtils;
 import com.example.phompang.thermalfeedback.model.Notification;
 import com.example.phompang.thermalfeedback.services.ServiceIO1;
 import com.google.firebase.database.DataSnapshot;
@@ -215,7 +216,9 @@ public class ExperimentFragment extends Fragment {
                 intent.putExtra("uid", uid);
                 intent.putExtra("day", day);
                 Log.d("expFrag", "resume");
-                getActivity().startService(intent);
+                if (!ServiceUtils.isRunning(getContext(), "com.example.phompang.thermalfeedback.services.ServiceIO1")) {
+                    getActivity().startService(intent);
+                }
                 hideProgressDialog();
             }
         }.start();
