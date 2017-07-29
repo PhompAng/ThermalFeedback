@@ -74,6 +74,8 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 	    normal.setProgressValue(shared.getInt(REGULAR, 0));
 	    stimuli_duration.setProgressValue(shared.getInt(DURATION, 10));
 
+	    duration.setText(getBaseContext().getString(R.string.duration, shared.getInt(DURATION, 15)));
+
         findViewById(R.id.very_hot).setOnClickListener(this);
         findViewById(R.id.hot).setOnClickListener(this);
         findViewById(R.id.very_cold).setOnClickListener(this);
@@ -107,16 +109,16 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         if (timer != null) {
             timer.cancel();
         }
-        timer = new CountDownTimer(15000, 1000) {
+        timer = new CountDownTimer(shared.getInt(DURATION, 15) * 1000, 1000) {
             public void onTick(long millisUntilFinished) {
                 testing.setText(String.format(Locale.getDefault(), "Testing stimuli: %s", testText));
-                duration.setText(String.format(Locale.getDefault(), "Duration: %d sec", + millisUntilFinished / 1000));
+	            duration.setText(getBaseContext().getString(R.string.duration, millisUntilFinished / 1000));
             }
 
             public void onFinish() {
                 mReceiverManager.setThermal_warning(0);
                 testing.setText("Testing stimuli: ");
-                duration.setText("Duration: 15 sec");
+	            duration.setText(getBaseContext().getString(R.string.duration, shared.getInt(DURATION, 15)));
             }
         }.start();
     }
@@ -138,29 +140,24 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onProgressChanged(Seeker seeker, int i, boolean b) {
-	    Seeker s = null;
         switch (seeker.getId()) {
             case R.id.neutral:
-            	s = neutral;
+            	neutral.setText(getBaseContext().getString(R.string.neutral, i));
                 shared.save(NEUTRAL, i);
                 break;
             case R.id.high:
-            	s = high;
+            	high.setText(getBaseContext().getString(R.string.high, i));
                 shared.save(VERY, i);
                 break;
             case R.id.normal:
-            	s = normal;
+            	normal.setText(getBaseContext().getString(R.string.normal, i));
                 shared.save(REGULAR, i);
                 break;
             case R.id.stimuli_duration:
-            	s = stimuli_duration;
+            	stimuli_duration.setText(getBaseContext().getString(R.string.stimuli_duration, i));
                 shared.save(DURATION, i);
+                duration.setText(getBaseContext().getString(R.string.duration, shared.getInt(DURATION, 15)));
                 break;
         }
-
-	    if (s != null) {
-		    String toReplace = s.getDefaultText().replaceFirst("\\(", "(" + i + " ");
-		    s.setText(toReplace);
-	    }
     }
 }

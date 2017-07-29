@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.devahoy.android.shared.Shared;
 import com.example.phompang.thermalfeedback.services.Receiver.ReceiverManager;
 import com.example.phompang.thermalfeedback.services.ServiceIO1;
 
@@ -27,6 +28,12 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.phompang.thermalfeedback.Constant.DURATION;
+import static com.example.phompang.thermalfeedback.Constant.NEUTRAL;
+import static com.example.phompang.thermalfeedback.Constant.REGULAR;
+import static com.example.phompang.thermalfeedback.Constant.SHARED_NAME;
+import static com.example.phompang.thermalfeedback.Constant.VERY;
+
 public class ConnectionActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final int REQUEST_ENABLE_BT = 4545;
@@ -39,10 +46,17 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     TextView duration;
     @BindView(R.id.testing)
     TextView testing;
+    @BindView(R.id.neutral)
+    TextView neutral;
+    @BindView(R.id.high)
+    TextView high;
+    @BindView(R.id.normal)
+    TextView normal;
 
     private CountDownTimer timer;
     private BluetoothAdapter mBluetoothAdapter;
     private ReceiverManager mReceiverManager;
+    private Shared shared;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +68,13 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         getSupportActionBar().setTitle("Connect and Test Device");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        shared = new Shared(getApplicationContext(), SHARED_NAME);
         mReceiverManager = ReceiverManager.getInstance();
+
+        duration.setText(getBaseContext().getString(R.string.duration, shared.getInt(DURATION, 15)));
+        neutral.setText(getBaseContext().getString(R.string.neutral, shared.getInt(NEUTRAL, 32)));
+        high.setText(getBaseContext().getString(R.string.high, shared.getInt(VERY, 0)));
+        normal.setText(getBaseContext().getString(R.string.normal, shared.getInt(REGULAR, 0)));
 
         findViewById(R.id.very_hot).setOnClickListener(this);
         findViewById(R.id.hot).setOnClickListener(this);
@@ -131,16 +151,16 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         if (timer != null) {
             timer.cancel();
         }
-        timer = new CountDownTimer(15000, 1000) {
+        timer = new CountDownTimer(shared.getInt(DURATION, 15) * 1000, 1000) {
             public void onTick(long millisUntilFinished) {
                 testing.setText(String.format(Locale.getDefault(), "Testing stimuli: %s", testText));
-                duration.setText(String.format(Locale.getDefault(), "Duration: %d sec", + millisUntilFinished / 1000));
+                duration.setText(getBaseContext().getString(R.string.duration, millisUntilFinished / 1000));
             }
 
             public void onFinish() {
                 mReceiverManager.setThermal_warning(0);
                 testing.setText("Testing stimuli: ");
-                duration.setText("Duration: 15 sec");
+                duration.setText(getBaseContext().getString(R.string.duration, shared.getInt(DURATION, 15)));
             }
         }.start();
     }

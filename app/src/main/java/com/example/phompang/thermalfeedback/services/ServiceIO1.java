@@ -173,8 +173,8 @@ public class ServiceIO1 extends IOIOService {
                     return;
                 }
                 int neutral_temp = shared.getInt(NEUTRAL, 32);
-                int intensity_very = shared.getInt(VERY, 6);
-                int intensity_regular = shared.getInt(REGULAR, 3);
+                int intensity_very = shared.getInt(VERY, 0);
+                int intensity_regular = shared.getInt(REGULAR, 0);
                 Integer muti_cool = 1000, muti_verycool = 1500, multi_hot = 100, multi_veryhot = 120;
                 int feedbackPeriod = shared.getInt(DURATION, 15);
 
