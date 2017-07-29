@@ -3,6 +3,7 @@ package com.example.phompang.thermalfeedback.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ public class Seeker extends FrameLayout {
 
     private TextView text;
     private DiscreteSeekBar seeker;
+	private String defaultText;
 
     public Seeker(Context context) {
         super(context);
@@ -45,6 +47,7 @@ public class Seeker extends FrameLayout {
         if (attributeSet != null) {
             TypedArray typedArray = getContext().obtainStyledAttributes(attributeSet, R.styleable.Seeker);
             String text = typedArray.getString(R.styleable.Seeker_sk_text);
+	        defaultText = typedArray.getString(R.styleable.Seeker_sk_text);
             int min = typedArray.getInt(R.styleable.Seeker_sk_min, 0);
             int max = typedArray.getInt(R.styleable.Seeker_sk_max, 0);
             typedArray.recycle();
@@ -52,14 +55,29 @@ public class Seeker extends FrameLayout {
             setText(text);
             setMin(min);
             setMax(max);
-
-            seeker.setProgress(min);
         }
     }
 
     private void bind() {
         text = (TextView) findViewById(R.id.text);
         seeker = (DiscreteSeekBar) findViewById(R.id.seeker);
+	    seeker.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
+		    @Override
+		    public void onProgressChanged(DiscreteSeekBar discreteSeekBar, int i, boolean b) {
+			    String toReplace = defaultText.replaceFirst("\\(", "(" + i + " ");
+			    setText(toReplace);
+		    }
+
+		    @Override
+		    public void onStartTrackingTouch(DiscreteSeekBar discreteSeekBar) {
+
+		    }
+
+		    @Override
+		    public void onStopTrackingTouch(DiscreteSeekBar discreteSeekBar) {
+
+		    }
+	    });
     }
 
     public void setText(String text) {

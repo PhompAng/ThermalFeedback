@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.phompang.thermalfeedback.services.Receiver.ReceiverManager;
 import com.example.phompang.thermalfeedback.services.ServiceIO1;
+import com.example.phompang.thermalfeedback.view.Seeker;
 
 import java.util.Locale;
 
