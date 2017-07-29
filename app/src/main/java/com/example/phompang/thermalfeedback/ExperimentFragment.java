@@ -205,6 +205,9 @@ public class ExperimentFragment extends Fragment implements ClearDialog.OnDialog
     @Override
     public void onPause() {
         super.onPause();
+	    if (timer != null) {
+		    timer.cancel();
+	    }
     }
 
     private CountDownTimer timer;
