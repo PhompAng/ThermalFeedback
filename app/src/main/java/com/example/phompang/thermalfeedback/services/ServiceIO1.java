@@ -12,6 +12,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.devahoy.android.shared.Shared;
 import com.example.phompang.thermalfeedback.app.NLService;
 import com.example.phompang.thermalfeedback.services.Receiver.NotificationReceiver;
 import com.example.phompang.thermalfeedback.services.Receiver.PhoneListener;
@@ -28,6 +29,12 @@ import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOService;
 
+import static com.example.phompang.thermalfeedback.Constant.DURATION;
+import static com.example.phompang.thermalfeedback.Constant.NEUTRAL;
+import static com.example.phompang.thermalfeedback.Constant.REGULAR;
+import static com.example.phompang.thermalfeedback.Constant.SHARED_NAME;
+import static com.example.phompang.thermalfeedback.Constant.VERY;
+
 /**
  * Created by phompang on 1/5/2017 AD.
  */
@@ -43,10 +50,12 @@ public class ServiceIO1 extends IOIOService {
 
     private String uid;
     private int day;
+    private Shared shared;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
+        shared = new Shared(getApplicationContext(), SHARED_NAME);
 
         Log.d("serviceIO1", "start");
         Log.d("process", Process.myPid() + "");
@@ -163,11 +172,11 @@ public class ServiceIO1 extends IOIOService {
                     dOutB.write(false);
                     return;
                 }
-                int neutral_temp = 32;
-                int intensity_very = 6;
-                int intensity_regular = 3;
+                int neutral_temp = shared.getInt(NEUTRAL, 32);
+                int intensity_very = shared.getInt(VERY, 6);
+                int intensity_regular = shared.getInt(REGULAR, 3);
                 Integer muti_cool = 1000, muti_verycool = 1500, multi_hot = 100, multi_veryhot = 120;
-                int feedbackPerieod = 15;
+                int feedbackPeriod = shared.getInt(DURATION, 15);
 
                 Log.d("thermal", manager.getThermal_warning() + "");
 //                if (day == 1 || day == 3) {
@@ -219,7 +228,7 @@ public class ServiceIO1 extends IOIOService {
 
                 Log.d("Warning", "Delay = " + manager.getDelay_warning());
                 Log.d("Hold", "hold = " + manager.isHold());
-                if (manager.isHold() || manager.getDelay_warning() <= feedbackPerieod) {
+                if (manager.isHold() || manager.getDelay_warning() <= feedbackPeriod) {
                     manager.setDelay_warning(manager.getDelay_warning()+1);
                 } else {
                     manager.setThermal_warning(0);

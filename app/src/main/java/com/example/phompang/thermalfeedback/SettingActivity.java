@@ -6,13 +6,17 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.devahoy.android.shared.Shared;
 import com.example.phompang.thermalfeedback.services.Receiver.ReceiverManager;
 import com.example.phompang.thermalfeedback.services.ServiceIO1;
 import com.example.phompang.thermalfeedback.view.Seeker;
+
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 import java.util.Locale;
 
@@ -20,7 +24,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
+import static com.example.phompang.thermalfeedback.Constant.DURATION;
+import static com.example.phompang.thermalfeedback.Constant.NEUTRAL;
+import static com.example.phompang.thermalfeedback.Constant.REGULAR;
+import static com.example.phompang.thermalfeedback.Constant.SHARED_NAME;
+import static com.example.phompang.thermalfeedback.Constant.VERY;
+
+public class SettingActivity extends AppCompatActivity implements View.OnClickListener, Seeker.OnProgressChangeListener {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -28,9 +38,18 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     TextView duration;
     @BindView(R.id.testing)
     TextView testing;
+    @BindView(R.id.neutral)
+    Seeker neutral;
+    @BindView(R.id.high)
+    Seeker high;
+    @BindView(R.id.normal)
+    Seeker normal;
+    @BindView(R.id.stimuli_duration)
+    Seeker stimuli_duration;
 
     private CountDownTimer timer;
     private ReceiverManager mReceiverManager;
+    private Shared shared;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +61,18 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         getSupportActionBar().setTitle("Calibrate Device");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        shared = new Shared(getApplicationContext(), SHARED_NAME);
         mReceiverManager = ReceiverManager.getInstance();
+
+        neutral.setOnProgressChangeListener(this);
+        high.setOnProgressChangeListener(this);
+        normal.setOnProgressChangeListener(this);
+        stimuli_duration.setOnProgressChangeListener(this);
+
+	    neutral.setProgressValue(shared.getInt(NEUTRAL, 30));
+	    high.setProgressValue(shared.getInt(VERY, 0));
+	    normal.setProgressValue(shared.getInt(REGULAR, 0));
+	    stimuli_duration.setProgressValue(shared.getInt(DURATION, 10));
 
         findViewById(R.id.very_hot).setOnClickListener(this);
         findViewById(R.id.hot).setOnClickListener(this);
@@ -104,5 +134,33 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             timer.cancel();
         }
         stopService(new Intent(getApplicationContext(), ServiceIO1.class));
+    }
+
+    @Override
+    public void onProgressChanged(Seeker seeker, int i, boolean b) {
+	    Seeker s = null;
+        switch (seeker.getId()) {
+            case R.id.neutral:
+            	s = neutral;
+                shared.save(NEUTRAL, i);
+                break;
+            case R.id.high:
+            	s = high;
+                shared.save(VERY, i);
+                break;
+            case R.id.normal:
+            	s = normal;
+                shared.save(REGULAR, i);
+                break;
+            case R.id.stimuli_duration:
+            	s = stimuli_duration;
+                shared.save(DURATION, i);
+                break;
+        }
+
+	    if (s != null) {
+		    String toReplace = s.getDefaultText().replaceFirst("\\(", "(" + i + " ");
+		    s.setText(toReplace);
+	    }
     }
 }

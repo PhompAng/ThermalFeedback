@@ -36,6 +36,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import static com.example.phompang.thermalfeedback.Constant.SHARED_NAME;
+
 public class ExperimentActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         OnFragmentInteractionListener, SummaryFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, TabLayout.OnTabSelectedListener {
@@ -59,8 +61,8 @@ public class ExperimentActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
-
-        shared = new Shared(this, "thermal");
+        
+        shared = new Shared(getApplicationContext(), SHARED_NAME);
 
         if (getIntent() != null) {
             uid = getIntent().getStringExtra("uid");

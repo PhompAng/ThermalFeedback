@@ -3,7 +3,6 @@ package com.example.phompang.thermalfeedback.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -20,8 +19,9 @@ public class Seeker extends FrameLayout {
     private TextView text;
     private DiscreteSeekBar seeker;
 	private String defaultText;
+	private OnProgressChangeListener onProgressChangeListener;
 
-    public Seeker(Context context) {
+	public Seeker(Context context) {
         super(context);
         setUp(null);
     }
@@ -47,7 +47,7 @@ public class Seeker extends FrameLayout {
         if (attributeSet != null) {
             TypedArray typedArray = getContext().obtainStyledAttributes(attributeSet, R.styleable.Seeker);
             String text = typedArray.getString(R.styleable.Seeker_sk_text);
-	        defaultText = typedArray.getString(R.styleable.Seeker_sk_text);
+	        setDefaultText(typedArray.getString(R.styleable.Seeker_sk_text));
             int min = typedArray.getInt(R.styleable.Seeker_sk_min, 0);
             int max = typedArray.getInt(R.styleable.Seeker_sk_max, 0);
             typedArray.recycle();
@@ -64,8 +64,9 @@ public class Seeker extends FrameLayout {
 	    seeker.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
 		    @Override
 		    public void onProgressChanged(DiscreteSeekBar discreteSeekBar, int i, boolean b) {
-			    String toReplace = defaultText.replaceFirst("\\(", "(" + i + " ");
-			    setText(toReplace);
+				if (onProgressChangeListener != null) {
+					onProgressChangeListener.onProgressChanged(Seeker.this, i, b);
+				}
 		    }
 
 		    @Override
@@ -99,4 +100,20 @@ public class Seeker extends FrameLayout {
     public int getValue() {
         return seeker.getProgress();
     }
+
+	public String getDefaultText() {
+		return defaultText;
+	}
+
+	public void setDefaultText(String defaultText) {
+		this.defaultText = defaultText;
+	}
+
+	public void setOnProgressChangeListener(OnProgressChangeListener onProgressChangeListener) {
+		this.onProgressChangeListener = onProgressChangeListener;
+	}
+
+	public interface OnProgressChangeListener {
+		public void onProgressChanged(Seeker seeker, int i, boolean b);
+	}
 }
