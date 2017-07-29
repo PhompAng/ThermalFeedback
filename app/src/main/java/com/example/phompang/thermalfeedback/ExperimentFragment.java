@@ -18,6 +18,7 @@ import com.example.phompang.thermalfeedback.adapter.NotificationAdapter;
 import com.example.phompang.thermalfeedback.app.ServiceUtils;
 import com.example.phompang.thermalfeedback.model.Notification;
 import com.example.phompang.thermalfeedback.services.ServiceIO1;
+import com.example.phompang.thermalfeedback.view.ClearDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,7 +41,7 @@ import butterknife.Unbinder;
  * Use the {@link ExperimentFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ExperimentFragment extends Fragment {
+public class ExperimentFragment extends Fragment implements ClearDialog.OnDialogListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String TAG = ExperimentFragment.class.getSimpleName();
@@ -51,6 +52,7 @@ public class ExperimentFragment extends Fragment {
     private String uid;
     private int notiType;
     private int day;
+	private boolean isDialogShow = false;
 
     private OnFragmentInteractionListener mListener;
 
@@ -137,6 +139,11 @@ public class ExperimentFragment extends Fragment {
         listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!isDialogShow && dataSnapshot.getChildrenCount() > 0) {
+	                isDialogShow = true;
+                    ClearDialog dialog = new ClearDialog.Builder().build();
+                    dialog.show(getChildFragmentManager(), "");
+                }
                 notifications.clear();
                 for (DataSnapshot noti: dataSnapshot.getChildren()) {
                     try {
@@ -249,6 +256,16 @@ public class ExperimentFragment extends Fragment {
     public void setNotiType(int notiType) {
         this.notiType = notiType;
         retrieveNotifications();
+    }
+
+    @Override
+    public void onNegativeClick() {
+
+    }
+
+    @Override
+    public void onPositiveClick() {
+        reference.child("notifications").child(uid).child(String.valueOf(day)).setValue(null);
     }
 
     /**
