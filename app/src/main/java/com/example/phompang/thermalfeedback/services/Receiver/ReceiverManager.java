@@ -50,9 +50,9 @@ public class ReceiverManager {
         if (priority(thermal_warning) > priority(this.current_thermal_warning)) {
             count = 1;
             current_thermal_warning = thermal_warning;
-        } else if (thermal_warning == this.current_thermal_warning){
+        } else if (thermal_warning == this.current_thermal_warning) {
             count++;
-        } else if (thermal_warning == 0){
+        } else if (thermal_warning == 0) {
             count = 0;
             current_thermal_warning = 0;
         }
@@ -61,7 +61,7 @@ public class ReceiverManager {
     private void checkHold() {
         switch (current_thermal_warning) {
             case 1: //very hot
-            case 2: //hoy
+            case 2: //hot
                 if (count >= 2) {
                     this.hold = true;
                 }
@@ -136,11 +136,11 @@ public class ReceiverManager {
             case 1: //very hot
                 return 4;
             case 2: //hot
-                return 2;
+                return 3;
             case 3: //cold
                 return 1;
             case 4: //very cold
-                return 3;
+                return 2;
             default:
                 return 0;
         }
