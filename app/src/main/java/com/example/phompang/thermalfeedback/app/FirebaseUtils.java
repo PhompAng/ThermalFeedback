@@ -68,6 +68,25 @@ public class FirebaseUtils {
         });
     }
 
+    public static void responseNotification(String uid, int day, final String type, final long responseTime, final int iFeel) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child("notifications").child(uid).child(String.valueOf(day));
+        query.orderByChild("type").equalTo(type).limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot latestNoti: dataSnapshot.getChildren()) {
+                    latestNoti.getRef().child("responseTime").setValue(responseTime);
+                    latestNoti.getRef().child("feeling").setValue(iFeel);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public static void endCallNotification(String uid, int day, String s, final long endTime) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference.child("notifications").child(uid).child(String.valueOf(day));

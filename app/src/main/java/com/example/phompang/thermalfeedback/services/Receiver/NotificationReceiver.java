@@ -70,7 +70,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             Log.d(TAG, "START " + tempPacket + ": " + tickerText + " " + timeStart);
             mReceiverManager.setDelay_warning(0);
             pushNotification(tempPacket, thermal_warning, date.getTime(), real);
-        } else if (!state && (tickerText != null)) {
+        } else if (!state && (tickerText != null) && !tempPacket.equals("com.example.phompang.thermalfeedback")) {
             mReceiverManager.setThermal_warning(0);
             String timeStop = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss", Locale.getDefault()).format(date);
             Log.d(TAG, "STOP " + tempPacket + ": " + tickerText + " " + timeStop);
