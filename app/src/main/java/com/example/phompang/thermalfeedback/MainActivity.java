@@ -17,7 +17,11 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.devahoy.android.shared.Shared;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     public static final String TAG = MainActivity.class.getSimpleName();
 
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
+	private FirebaseRemoteConfig mFirebaseRemoteConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +52,24 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
         requestPermissions();
 
         shared = new Shared(this, "thermal");
+
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+	    FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+			    .setDeveloperModeEnabled(BuildConfig.DEBUG)
+			    .build();
+	    mFirebaseRemoteConfig.setConfigSettings(configSettings);
+	    Log.d(TAG, "onCreate: " + configSettings.isDeveloperModeEnabled());
+	    mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
+	    mFirebaseRemoteConfig.fetch(10).addOnCompleteListener(new OnCompleteListener<Void>() {
+		    @Override
+		    public void onComplete(@NonNull Task<Void> task) {
+			    if (task.isSuccessful()) {
+				    Log.d("FETCH", "Succeeded");
+				    mFirebaseRemoteConfig.activateFetched();
+				    Log.d("aaaaaa", FirebaseRemoteConfig.getInstance().getString("bbb", "11111") + " ");
+			    }
+		    }
+	    });
 
         FirebaseMessaging.getInstance().subscribeToTopic("fake_noti");
 

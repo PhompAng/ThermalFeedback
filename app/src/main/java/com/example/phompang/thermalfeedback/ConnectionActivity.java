@@ -5,12 +5,16 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +26,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,11 +60,27 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     TextView high;
     @BindView(R.id.normal)
     TextView normal;
+    @BindView(R.id.spinner)
+    Spinner spinner;
+    @BindView(R.id.test)
+    Button testBtn;
+    @BindView(R.id.very_hot_test)
+    Button veryHotTest;
+    @BindView(R.id.hot_test)
+    Button hotTest;
+    @BindView(R.id.very_cold_test)
+    Button veryColdTest;
+    @BindView(R.id.cold_test)
+    Button coldTest;
 
     private CountDownTimer timer;
     private BluetoothAdapter mBluetoothAdapter;
     private ReceiverManager mReceiverManager;
     private Shared shared;
+    private List<String> data;
+    private int currentTest;
+    private int delay = 0;
+    private int[] prime = new int[] {5, 7, 11, 13};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +105,43 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.very_cold).setOnClickListener(this);
         findViewById(R.id.cold).setOnClickListener(this);
 
+        veryHotTest.setOnClickListener(new TestButtonClickListener());
+        hotTest.setOnClickListener(new TestButtonClickListener());
+        veryColdTest.setOnClickListener(new TestButtonClickListener());
+        coldTest.setOnClickListener(new TestButtonClickListener());
+
+
+        setUpSpinner();
+        testBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                final String testNumber = data.get(spinner.getSelectedItemPosition());
+//				List<String> seq = Arrays.asList(FirebaseRemoteConfig.getInstance().getString(testNumber, "33333").split("\\s+"));
+                List<String> seq = new ArrayList<>();
+                delay = 0;
+                for (int i = 0; i < 5; i++) {
+                    seq.add(String.valueOf(ThreadLocalRandom.current().nextInt(1, 4 + 1)));
+                }
+                Handler handler = new Handler();
+                for (int a = 0; a < seq.size(); a++) {
+                    final int ii = Integer.parseInt(seq.get(a));
+                    delay += 1000 * prime[ThreadLocalRandom.current().nextInt(0, 3)];
+                    Log.d("delay", delay + "");
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Integer i = ii;
+                            currentTest = ii;
+                            Snackbar.make(findViewById(R.id.activity_connection), String.format(Locale.getDefault(), "Testing: %s", i), Snackbar.LENGTH_LONG).show();
+                            mReceiverManager.setThermal_warning(i);
+                            mReceiverManager.setDelay_warning(0);
+                        }
+                    }, delay);
+                }
+            }
+        });
+
+
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             Log.e("Bluetooth", "Do ot support bluetooth");
@@ -95,6 +156,18 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
 
 //        showDevices();
     }
+
+    private void setUpSpinner() {
+        data = Arrays.asList(
+                "test1",
+                "test2",
+                "test3",
+                "test4",
+                "test5");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, data);
+        spinner.setAdapter(adapter);
+    }
+
 
     private void showDevices() {
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
@@ -163,6 +236,18 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 duration.setText(getBaseContext().getString(R.string.duration, shared.getInt(DURATION, 15)));
             }
         }.start();
+    }
+
+    private class TestButtonClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            int guess = Integer.parseInt(v.getTag().toString());
+            if (currentTest == guess) {
+                Toast.makeText(getApplicationContext(), "Correct", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Wrong", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)

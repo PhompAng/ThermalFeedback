@@ -10,6 +10,7 @@ public class Notification {
     private String type;
     private String phone;
     private int stimuli;
+    private int feeling;
     private boolean isContact;
     private boolean isThermal;
     private boolean isVibrate;
@@ -111,5 +112,13 @@ public class Notification {
 
     public void setEndTime(long endTime) {
         this.endTime = endTime;
+    }
+
+    public int getFeeling() {
+        return feeling;
+    }
+
+    public void setFeeling(int feeling) {
+        this.feeling = feeling;
     }
 }

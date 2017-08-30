@@ -49,6 +49,10 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.ViewHold
             holder.endTime.setText(DateTimeUtils.toDateString(notification.getEndTime()));
         }
 
+        if (!notification.getIsReal()) {
+            holder.feel.setText(stimuliToString(notification.getFeeling()));
+        }
+
         holder.title.setText(notification.getType());
         holder.attemp.setText("Attemp " + notification.getAttempt());
         holder.stimuli.setText(stimuliToString(notification.getStimuli()));
@@ -87,6 +91,8 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.ViewHold
         NotificationDetail contact;
         @BindView(R.id.stimuli)
         NotificationDetail stimuli;
+        @BindView(R.id.feel)
+        NotificationDetail feel;
         @BindView(R.id.is_contact)
         NotificationDetail isContact;
         @BindView(R.id.is_thermal)

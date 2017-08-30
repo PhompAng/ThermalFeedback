@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<defaultsMap>
+	<entry>
+		<key>test1</key>
+		<value>111111</value>
+	</entry>
+
+	<entry>
+		<key>test2</key>
+		<value>22222</value>
+	</entry>
+</defaultsMap>
