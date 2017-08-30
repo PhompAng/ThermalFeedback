@@ -187,7 +187,37 @@ public class ServiceIO1 extends IOIOService {
                         dOutA.write(true);
                         dOutB.write(false);
                         //pTemp.setPulseWidth(multi_veryhot * (neutral_temp + intensity_very));
-                        pTemp.setPulseWidth(2580);
+                        pTemp.setPulseWidth(0);
+                        Thread.sleep(10000);
+
+                        pTemp.setPulseWidth(1000); //32
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(1200); //33
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(1400); //34
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(1800); //35
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(1800); //36
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(2500); //37
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(2500); //38
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(1400); //38
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(1000); //38
+                        Thread.sleep(2000);
+
+                        pTemp.close();
                         break;
                     case 2: //hot
                         Log.d("Warning", "Call from s/o else - hot thermal stumuli");
@@ -195,21 +225,87 @@ public class ServiceIO1 extends IOIOService {
                         dOutA.write(true);
                         dOutB.write(false);
                         //pTemp.setPulseWidth(multi_hot * (neutral_temp + intensity_regular));
-                        pTemp.setPulseWidth(2000);
+                        pTemp.setPulseWidth(0);
+                        Thread.sleep(10000);
+
+                        pTemp.setPulseWidth(2400); //35
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(4000); //38
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(2400); //38
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(1800); //38
+                        Thread.sleep(3000);
+
+                        pTemp.setPulseWidth(1600); //38
+                        Thread.sleep(4000);
+
+                        pTemp.close();
                         break;
                     case 3: // cold
                         Log.d("Warning", "App notification from fb app - cold thermal stimuli");
                         dStby.write(true);
                         dOutA.write(false);
                         dOutB.write(true);
-                        pTemp.setPulseWidth(muti_cool * (neutral_temp - intensity_regular));
+                        pTemp.setPulseWidth(1000); //31
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(2000); //30
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(2500); //29
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(2000); //29
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(1600); //29
+                        Thread.sleep(2000);
+
+                        pTemp.setPulseWidth(1800); //29
+                        Thread.sleep(2000);
+
+                        pTemp.setPulseWidth(1800); //29
+                        Thread.sleep(2000);
+
+                        pTemp.close();
                         break;
                     case 4: //very cold
                         Log.d("Warning", "Personal Messaging from SMS or FB Line apps - very cold thermal stumuli");
                         dStby.write(true);
                         dOutA.write(false);
                         dOutB.write(true);
-                        pTemp.setPulseWidth(muti_verycool * (neutral_temp - intensity_very));
+                        pTemp.setPulseWidth(0);
+                        Thread.sleep(10000);
+
+                        pTemp.setPulseWidth(1000); //31
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(2000); //30
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(2500); //29
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(3000); //28
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(3800); //27
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(6200); //26
+                        Thread.sleep(1000);
+
+                        pTemp.setPulseWidth(3200); //26
+                        Thread.sleep(3000);
+
+                        pTemp.setPulseWidth(3800); //26
+                        Thread.sleep(1000);
+
+                        pTemp.close();
                         break;
                     default:
                         Log.d("Warning", "set peltier to neutral temperature/not send any electricity to peltier.");
