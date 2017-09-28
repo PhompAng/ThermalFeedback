@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.devahoy.android.shared.Shared;
 import com.example.phompang.thermalfeedback.services.Receiver.ReceiverManager;
 import com.example.phompang.thermalfeedback.services.ServiceIO1;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -115,24 +116,27 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         testBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                final String testNumber = data.get(spinner.getSelectedItemPosition());
-//				List<String> seq = Arrays.asList(FirebaseRemoteConfig.getInstance().getString(testNumber, "33333").split("\\s+"));
-                List<String> seq = new ArrayList<>();
+                final String testNumber = data.get(spinner.getSelectedItemPosition());
+	            List<String> seq = Arrays.asList(FirebaseRemoteConfig.getInstance().getString(testNumber).split("\\s+"));
+                Log.d("aaaaa", "onClick: " + seq.toString());
+//                List<String> seq = new ArrayList<>();
                 delay = 0;
-                for (int i = 0; i < 5; i++) {
-                    seq.add(String.valueOf(ThreadLocalRandom.current().nextInt(1, 4 + 1)));
-                }
+//                for (int i = 0; i < 5; i++) {
+//                    seq.add(String.valueOf(ThreadLocalRandom.current().nextInt(1, 4 + 1)));
+//                }
                 Handler handler = new Handler();
                 for (int a = 0; a < seq.size(); a++) {
                     final int ii = Integer.parseInt(seq.get(a));
+                    final String aa = Integer.toString(a);
                     delay += 1000 * prime[ThreadLocalRandom.current().nextInt(0, 3)];
                     Log.d("delay", delay + "");
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             Integer i = ii;
+                            String aaa = aa;
                             currentTest = ii;
-                            Snackbar.make(findViewById(R.id.activity_connection), String.format(Locale.getDefault(), "Testing: %s", i), Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(findViewById(R.id.activity_connection), String.format(Locale.getDefault(), "Testing: %s", aaa), Snackbar.LENGTH_LONG).show();
                             mReceiverManager.setThermal_warning(i);
                             mReceiverManager.setDelay_warning(0);
                         }

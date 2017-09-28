@@ -50,7 +50,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setSmallIcon(R.drawable.ic_priority_high_black_24dp)
                 .setContentTitle(title)
                 .setTicker(messageBody)
-                .setContentText(messageBody)
+//                .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);

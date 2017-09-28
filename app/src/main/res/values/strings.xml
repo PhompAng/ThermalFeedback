@@ -1,22 +1,22 @@
 <resources>
-    <string name="app_name">Thermal Feedback</string>
+	<string name="app_name">Thermal Feedback</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="setting">Setting</string>
-    <string name="title_activity_experiment">ExperimentActivity</string>
+	<!-- TODO: Remove or change this placeholder text -->
+	<string name="hello_blank_fragment">Hello blank fragment</string>
+	<string name="setting">Setting</string>
+	<string name="title_activity_experiment">ExperimentActivity</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+	<string name="navigation_drawer_open">Open navigation drawer</string>
+	<string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="neutral">Neutral Temperature (%1$d°C)</string>
-    <string name="high">Intensity for High Level (%1$d°C/sec)</string>
-    <string name="normal">Intensity for Normal Level (%1$d°C/sec)</string>
-    <string name="stimuli_duration">Stimuli Duration (%1$d sec)</string>
-    <string name="duration">Duration: %1$d sec</string>
+	<string name="neutral">Neutral Temperature (%1$d°C)</string>
+	<string name="high">Intensity for High Level (%1$d°C/sec)</string>
+	<string name="normal">Intensity for Normal Level (%1$d°C/sec)</string>
+	<string name="stimuli_duration">Stimuli Duration (%1$d sec)</string>
+	<string name="duration">Duration: %1$d sec</string>
 
-    <string name="action_settings">Settings</string>
-    <string name="connected">Connected</string>
-    <string name="not_connect">Not connect</string>
-    <string name="required">Required</string>
+	<string name="action_settings">Settings</string>
+	<string name="connected">Connected</string>
+	<string name="not_connect">Not connect</string>
+	<string name="required">Required</string>
 </resources>

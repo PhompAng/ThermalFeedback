@@ -9,4 +9,14 @@
 		<key>test2</key>
 		<value>22222</value>
 	</entry>
+
+	<entry>
+		<key>test3</key>
+		<value>12345</value>
+	</entry>
+
+	<entry>
+		<key>bbb</key>
+		<value>bbb</value>
+	</entry>
 </defaultsMap>

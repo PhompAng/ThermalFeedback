@@ -61,7 +61,7 @@ public class ExperimentActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
-        
+
         shared = new Shared(getApplicationContext(), SHARED_NAME);
 
         if (getIntent() != null) {
@@ -219,7 +219,6 @@ public class ExperimentActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        shared.save("getNoti", false);
         EventBus.getDefault().unregister(this);
     }
 
@@ -269,6 +268,7 @@ public class ExperimentActivity extends AppCompatActivity
     }
 
     private void logout() {
+        shared.save("getNoti", false);
         shared.save("using", false);
         shared.remove("user_id");
         shared.remove("day");

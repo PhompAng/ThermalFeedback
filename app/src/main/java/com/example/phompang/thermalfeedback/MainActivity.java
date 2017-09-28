@@ -60,13 +60,14 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
 	    mFirebaseRemoteConfig.setConfigSettings(configSettings);
 	    Log.d(TAG, "onCreate: " + configSettings.isDeveloperModeEnabled());
 	    mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
-	    mFirebaseRemoteConfig.fetch(10).addOnCompleteListener(new OnCompleteListener<Void>() {
+	    mFirebaseRemoteConfig.fetch(10).addOnCompleteListener(this, new OnCompleteListener<Void>() {
 		    @Override
 		    public void onComplete(@NonNull Task<Void> task) {
 			    if (task.isSuccessful()) {
 				    Log.d("FETCH", "Succeeded");
 				    mFirebaseRemoteConfig.activateFetched();
-				    Log.d("aaaaaa", FirebaseRemoteConfig.getInstance().getString("bbb", "11111") + " ");
+				    Log.d("aaaaaa", FirebaseRemoteConfig.getInstance().getString("bbb"));
+				    Log.d("aaaaaa", FirebaseRemoteConfig.getInstance().getString("test1"));
 			    }
 		    }
 	    });
