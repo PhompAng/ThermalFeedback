@@ -41,7 +41,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void sendNotification(String title, String messageBody) {
         Intent intent = new Intent(this, AnswerActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
@@ -49,8 +50,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_priority_high_black_24dp)
                 .setContentTitle(title)
+                .setContentText("Answer the question")
                 .setTicker(messageBody)
-//                .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);

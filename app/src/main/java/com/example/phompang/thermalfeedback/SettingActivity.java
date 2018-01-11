@@ -130,7 +130,9 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 	@Override
 	protected void onStart() {
 		super.onStart();
-		startService(new Intent(getApplicationContext(), ServiceIO1.class));
+		Intent intent = new Intent(getApplicationContext(), ServiceIO1.class);
+		intent.setAction(ServiceIO1.ACTION_START);
+		startService(intent);
 	}
 
 	@Override
@@ -139,7 +141,9 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 		if (timer != null) {
 			timer.cancel();
 		}
-		stopService(new Intent(getApplicationContext(), ServiceIO1.class));
+		Intent intent = new Intent(getApplicationContext(), ServiceIO1.class);
+		intent.setAction(ServiceIO1.ACTION_STOP);
+		startService(intent);
 	}
 
 	@Override

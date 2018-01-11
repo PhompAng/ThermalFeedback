@@ -276,7 +276,9 @@ public class ExperimentActivity extends AppCompatActivity
     }
 
     private void stopService() {
-        stopService(new Intent(getApplicationContext(), ServiceIO1.class));
+        Intent intent = new Intent(getApplicationContext(), ServiceIO1.class);
+        intent.setAction(ServiceIO1.ACTION_STOP);
+        startService(intent);
     }
 
     public void showTab() {

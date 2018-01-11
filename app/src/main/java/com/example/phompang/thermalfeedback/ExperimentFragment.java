@@ -225,6 +225,7 @@ public class ExperimentFragment extends Fragment implements ClearDialog.OnDialog
                 Intent intent = new Intent(getActivity(), ServiceIO1.class);
                 intent.putExtra("uid", uid);
                 intent.putExtra("day", day);
+                intent.setAction(ServiceIO1.ACTION_START);
                 Log.d("expFrag", "resume");
                 if (!ServiceUtils.isRunning(getContext(), "com.example.phompang.thermalfeedback.services.ServiceIO1")) {
                     getActivity().startService(intent);

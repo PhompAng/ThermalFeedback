@@ -1,5 +1,7 @@
 package com.example.phompang.thermalfeedback.services;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -8,11 +10,14 @@ import android.os.PowerManager;
 import android.os.Process;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.devahoy.android.shared.Shared;
+import com.example.phompang.thermalfeedback.MainActivity;
+import com.example.phompang.thermalfeedback.R;
 import com.example.phompang.thermalfeedback.app.NLService;
 import com.example.phompang.thermalfeedback.services.Receiver.NotificationReceiver;
 import com.example.phompang.thermalfeedback.services.Receiver.PhoneListener;
@@ -40,6 +45,9 @@ import static com.example.phompang.thermalfeedback.Constant.VERY;
  */
 
 public class ServiceIO1 extends IOIOService {
+    public static final String ACTION_START = "action-start";
+    public static final String ACTION_STOP = "action-stop";
+
     private NotificationReceiver mNotificationReceiver;
     private SMSReceiver mSmsReceiver;
     private PhoneListener mPhoneListener;
@@ -63,8 +71,18 @@ public class ServiceIO1 extends IOIOService {
 
         manager = ReceiverManager.getInstance();
 
-        if (intent.hasExtra("uid")) {
+        if (intent != null && intent.getAction() != null) {
+            if (intent.getAction().equals(ACTION_START)) {
+                showNoti();
+            } else if (intent.getAction().equals(ACTION_STOP)) {
+                stopForeground(true);
+                stopSelf();
+            }
+        }
+
+        if (intent != null && intent.hasExtra("uid")) {
             uid = intent.getStringExtra("uid");
+            Log.d("serviceIO1", uid);
             day = intent.getIntExtra("day", 1);
             manager.setUid(uid);
             manager.setDay(day);
@@ -99,9 +117,23 @@ public class ServiceIO1 extends IOIOService {
         return START_STICKY;
     }
 
+    private void showNoti() {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
+        Notification notification = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Thermal Feedback")
+                .setContentText("Running Experiment...")
+                .setContentIntent(pendingIntent).build();
+
+        startForeground(1337, notification);
+    }
+
     @Override
     public void onDestroy() {
-        super.onDestroy();
         Log.d("serviceIO1", "destroy");
         if (this.mWakeLock != null && mWakeLock.isHeld()) {
             this.mWakeLock.release();
@@ -111,6 +143,7 @@ public class ServiceIO1 extends IOIOService {
             this.unregisterReceiver(mSmsReceiver);
             this.unregisterReceiver(mNotificationReceiver);
         }
+        super.onDestroy();
     }
 
     @Override

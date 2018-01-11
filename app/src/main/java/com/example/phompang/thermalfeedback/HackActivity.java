@@ -82,7 +82,9 @@ public class HackActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStart() {
         super.onStart();
-        startService(new Intent(getApplicationContext(), ServiceIO1.class));
+        Intent intent = new Intent(getApplicationContext(), ServiceIO1.class);
+        intent.setAction(ServiceIO1.ACTION_START);
+        startService(intent);
     }
 
     @Override
@@ -91,6 +93,8 @@ public class HackActivity extends AppCompatActivity implements View.OnClickListe
         if (timer != null) {
             timer.cancel();
         }
-        stopService(new Intent(getApplicationContext(), ServiceIO1.class));
+        Intent intent = new Intent(getApplicationContext(), ServiceIO1.class);
+        intent.setAction(ServiceIO1.ACTION_STOP);
+        startService(intent);
     }
 }

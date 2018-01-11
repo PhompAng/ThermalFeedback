@@ -21,12 +21,14 @@ public class NotificationReceiver extends BroadcastReceiver {
     private ReceiverManager mReceiverManager;
 
     public NotificationReceiver(ReceiverManager manager) {
+        Log.d(TAG, manager.toString());
         mReceiverManager = manager;
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if (mReceiverManager.isPause()) {
+            Log.e(TAG, "onReceive: pause");
             return;
         }
         String tempPacket = intent.getStringExtra("notification_event");
